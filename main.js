@@ -76,40 +76,127 @@
 
   // ===== 精選課程輪播（前後按鈕）
   if (featuredTrack && (carouselPrev || carouselNext)) {
-    const slides = featuredTrack.querySelectorAll('.featured-slide');
-    const total = slides.length;
-    let featuredIndex = 0;
-    let maxIndex = 0;
+    const TRANSITION = 'transform 0.4s ease';
+    let index = 0;
+    let slideStep = 0;
+    let slideCount = 0;
+    let isAnimating = false;
+    let resizeTimer = null;
 
-    function updateFeaturedCarousel() {
-      if (!slides.length) return;
-      const carouselViewport = featuredTrack.parentElement; // .featured-carousel
-      const slideWidth = slides[0].offsetWidth || 200;
-      const gap = 20;
-      const viewportWidth = carouselViewport.clientWidth || 960;
-      const visibleCount = Math.max(1, Math.floor((viewportWidth + gap) / (slideWidth + gap)));
-      maxIndex = Math.max(0, total - visibleCount);
-      // 保證目前索引在範圍內
-      if (featuredIndex > maxIndex) featuredIndex = maxIndex;
-      const offset = -(featuredIndex * (slideWidth + gap));
+    function removeClones() {
+      // 移除舊的 clones，避免 resize/re-init 疊加
+      featuredTrack.querySelectorAll('.featured-slide.is-clone').forEach((el) => el.remove());
+    }
+
+    function measureStep(realSlides) {
+      if (realSlides.length < 2) return 0;
+      const r0 = realSlides[0].getBoundingClientRect();
+      const r1 = realSlides[1].getBoundingClientRect();
+      return r1.left - r0.left; // 含 gap 的「一步位移」
+    }
+
+    function applyTransform(instant) {
+      const offset = -(index * slideStep);
+
+      if (instant) {
+        featuredTrack.style.transition = 'none';
+      } else {
+        featuredTrack.style.transition = TRANSITION;
+      }
+
       featuredTrack.style.transform = 'translateX(' + offset + 'px)';
+
+      if (instant) {
+        // 強制 reflow，確保下一次 transition 不會被舊狀態影響
+        featuredTrack.getBoundingClientRect();
+        requestAnimationFrame(function () {
+          featuredTrack.style.transition = TRANSITION;
+        });
+      }
     }
 
-    if (carouselPrev) {
-      carouselPrev.addEventListener('click', function () {
-        featuredIndex = Math.max(0, featuredIndex - 1);
-        updateFeaturedCarousel();
+    function initCarousel() {
+      removeClones();
+
+      const realSlides = Array.from(featuredTrack.querySelectorAll('.featured-slide'));
+      slideCount = realSlides.length;
+      if (slideCount <= 1) return;
+
+      // 以「整組複製 3 份」做 infinite：
+      // [ clonesBefore(1..n) | real(1..n) | clonesAfter(1..n) ]
+      // 好處：不需要算 visibleCount，避免桌機/平板/手機出現結尾空白
+      const beforeFrag = document.createDocumentFragment();
+      const afterFrag = document.createDocumentFragment();
+
+      realSlides.forEach((sl) => {
+        const c = sl.cloneNode(true);
+        c.classList.add('is-clone');
+        beforeFrag.appendChild(c);
       });
-    }
-    if (carouselNext) {
-      carouselNext.addEventListener('click', function () {
-        featuredIndex = Math.min(maxIndex, featuredIndex + 1);
-        updateFeaturedCarousel();
+      realSlides.forEach((sl) => {
+        const c = sl.cloneNode(true);
+        c.classList.add('is-clone');
+        afterFrag.appendChild(c);
       });
+
+      const firstReal = realSlides[0];
+      featuredTrack.insertBefore(beforeFrag, firstReal);
+      featuredTrack.appendChild(afterFrag);
+
+      // 重新取得實際 real slides（原本節點沒有 is-clone class）
+      const updatedRealSlides = Array.from(featuredTrack.querySelectorAll('.featured-slide:not(.is-clone)'));
+      slideStep = measureStep(updatedRealSlides);
+
+      // 起始：指向中間 real 區（確保視窗永遠不會走到空白）
+      index = slideCount;
+      isAnimating = false;
+      applyTransform(true);
     }
 
-    window.addEventListener('resize', updateFeaturedCarousel);
-    updateFeaturedCarousel();
+    function goNext() {
+      if (isAnimating) return;
+      isAnimating = true;
+      index += 1;
+      applyTransform(false);
+    }
+
+    function goPrev() {
+      if (isAnimating) return;
+      isAnimating = true;
+      index -= 1;
+      applyTransform(false);
+    }
+
+    if (carouselNext) carouselNext.addEventListener('click', goNext);
+    if (carouselPrev) carouselPrev.addEventListener('click', goPrev);
+
+    featuredTrack.addEventListener('transitionend', function (e) {
+      if (e.propertyName !== 'transform') return;
+      isAnimating = false;
+
+      // index 走到後半 clones 區：瞬間切回中間 real 區的對應位置
+      if (index >= slideCount * 2) {
+        index = slideCount;
+        applyTransform(true);
+        return;
+      }
+
+      // index 走到前半 clones 區：瞬間切回中間 real 區的對應位置
+      if (index < slideCount) {
+        index = slideCount * 2 - 1;
+        applyTransform(true);
+        return;
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        initCarousel();
+      }, 150);
+    });
+
+    initCarousel();
   }
 
   // ===== 條款／隱私權彈窗

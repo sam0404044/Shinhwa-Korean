@@ -124,7 +124,7 @@
         </picture>
         <div class="hero-overlay hero-overlay--light">
           <h1>神話韓語</h1>
-          <p>跟著韓劇節奏，把韓文學起來</p>
+          <p>跟著韓劇節奏，把韓文學起來！</p>
           <div class="hero-cta">
             <a href="#news" class="btn btn-hero">最新消息</a>
             <a href="#courses" class="btn btn-hero btn-hero--outline"
@@ -133,9 +133,8 @@
           </div>
         </div>
         <!-- 向下指示箭頭：點擊滾動到熱門課程 -->
-        <a href="#courses" class="hero-scroll-indicator" aria-label="捲動到熱門課程">
-          <span class="hero-scroll-circle"></span>
-          <span class="hero-scroll-line"></span>
+        <a href="#courses" class="hero-scroll" aria-label="捲動到熱門課程">
+          <span></span>
         </a>
       </section>
 
@@ -501,18 +500,20 @@
               </div>
               <div class="testimonial-card">
                 <div
-                  class="testimonial-card__avatar testimonial-card__avatar--placeholder"
-                >
-                  4
-                </div>
+                  class="testimonial-card__avatar"
+                  style="
+                    background-image: url(&quot;../assets/images/testimonials/avatar-03.png&quot;);
+                  "
+                ></div>
                 <p>學員見證 4</p>
               </div>
               <div class="testimonial-card">
                 <div
-                  class="testimonial-card__avatar testimonial-card__avatar--placeholder"
-                >
-                  5
-                </div>
+                  class="testimonial-card__avatar"
+                  style="
+                    background-image: url(&quot;../assets/images/testimonials/avatar-03.png&quot;);
+                  "
+                ></div>
                 <p>學員見證 5</p>
               </div>
             </div>
@@ -629,47 +630,92 @@
           >
             精選課程
           </h2>
-            <div class="featured-carousel">
+          <div class="featured-carousel">
             <div class="featured-track">
               <div class="featured-slide">
-                <div
-                  class="slide-placeholder"
-                  style="background-image: url('../assets/images/courses/01.png');"
-                >
-                  零基礎韓文入門
-                </div>
+                <article class="course-card">
+                  <a href="courses.html?cat=beginner" class="course-card__link">
+                    <div
+                      class="course-card__img"
+                      style="background-image: url('../assets/images/courses/01.png');"
+                    ></div>
+                    <div class="course-card__body">
+                      <h3 class="course-card__title">零基礎韓文入門</h3>
+                      <p class="course-card__price">
+                        <span class="course-card__price--old">NT$ 2,000</span>
+                        NT$ 1,500
+                      </p>
+                    </div>
+                  </a>
+                </article>
               </div>
               <div class="featured-slide">
-                <div
-                  class="slide-placeholder"
-                  style="background-image: url('../assets/images/courses/02.png');"
-                >
-                  日常會話練習
-                </div>
+                <article class="course-card">
+                  <a href="courses.html?cat=conversation" class="course-card__link">
+                    <div
+                      class="course-card__img"
+                      style="background-image: url('../assets/images/courses/02.png');"
+                    ></div>
+                    <div class="course-card__body">
+                      <h3 class="course-card__title">日常會話練習</h3>
+                      <p class="course-card__price">
+                        <span class="course-card__price--old">NT$ 2,400</span>
+                        NT$ 1,800
+                      </p>
+                    </div>
+                  </a>
+                </article>
               </div>
               <div class="featured-slide">
-                <div
-                  class="slide-placeholder"
-                  style="background-image: url('../assets/images/courses/03.png');"
-                >
-                  TOPIK 檢定衝刺班
-                </div>
+                <article class="course-card">
+                  <a href="courses.html?cat=topik" class="course-card__link">
+                    <div
+                      class="course-card__img"
+                      style="background-image: url('../assets/images/courses/03.png');"
+                    ></div>
+                    <div class="course-card__body">
+                      <h3 class="course-card__title">TOPIK 檢定衝刺班</h3>
+                      <p class="course-card__price">
+                        <span class="course-card__price--old">NT$ 3,200</span>
+                        NT$ 2,680
+                      </p>
+                    </div>
+                  </a>
+                </article>
               </div>
               <div class="featured-slide">
-                <div
-                  class="slide-placeholder"
-                  style="background-image: url('../assets/images/courses/04.png');"
-                >
-                  文法全面整理
-                </div>
+                <article class="course-card">
+                  <a href="courses.html?cat=grammar" class="course-card__link">
+                    <div
+                      class="course-card__img"
+                      style="background-image: url('../assets/images/courses/04.png');"
+                    ></div>
+                    <div class="course-card__body">
+                      <h3 class="course-card__title">文法全面整理</h3>
+                      <p class="course-card__price">
+                        <span class="course-card__price--old">NT$ 2,800</span>
+                        NT$ 2,200
+                      </p>
+                    </div>
+                  </a>
+                </article>
               </div>
               <div class="featured-slide">
-                <div
-                  class="slide-placeholder"
-                  style="background-image: url('../assets/images/courses/01.png');"
-                >
-                  免費體驗精選
-                </div>
+                <article class="course-card">
+                  <a href="free-trial.html" class="course-card__link">
+                    <div
+                      class="course-card__img"
+                      style="background-image: url('../assets/images/courses/01.png');"
+                    ></div>
+                    <div class="course-card__body">
+                      <h3 class="course-card__title">免費體驗精選</h3>
+                      <p class="course-card__price">
+                        <span class="course-card__price--old">NT$ 1,200</span>
+                        NT$ 0
+                      </p>
+                    </div>
+                  </a>
+                </article>
               </div>
             </div>
             <button type="button" class="carousel-prev" aria-label="上一張">

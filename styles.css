@@ -384,6 +384,39 @@ ul {
   z-index: 3;
   pointer-events: auto;
 }
+
+/* Hero 底部向下箭頭（圓形玻璃按鈕） */
+.hero-scroll {
+	position: absolute;
+	bottom: 22px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 42px;
+	height: 42px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+	z-index: 1;
+}
+
+.hero-scroll span {
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-right: 3px solid var(--color-primary);
+	border-bottom: 3px solid var(--color-primary);
+	transform: rotate(45deg);
+	animation: hero-arrow-bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes hero-arrow-bounce {
+	0%, 100% { transform: rotate(45deg) translate(0, 0); }
+	50% { transform: rotate(45deg) translate(3px, 3px); }
+}
+
 .hero-scroll-line {
   position: relative;
   width: 3px;
@@ -457,7 +490,10 @@ ul {
 }
 .section-title {
   margin: 0 0 24px;
-  font-size: 1.6rem;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   text-align: center;
 }
 .section-title--green {
@@ -628,7 +664,7 @@ ul {
 /* 裝飾型標題（參考示意圖：上方有刻度線與英文標籤） */
 .section-title--decor {
   position: relative;
-  padding-top: 40px;
+  padding-top: 46px;
 }
 .section-title--decor::before {
   content: '';
@@ -636,7 +672,7 @@ ul {
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
+  height: 18px;
   /* 只有細刻度線，沒有實心底色條 */
   background: repeating-linear-gradient(
     to right,
@@ -653,9 +689,9 @@ ul {
 .section-title--decor::after {
   content: attr(data-en);
   position: absolute;
-  top: 18px; /* 避免文字疊到刻度線 */
+  top: 20px; /* 避免文字疊到刻度線 */
   right: 20px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   font-weight: 700;
@@ -676,6 +712,22 @@ ul {
 }
 .section-title--decor.section-title--on-gradient::after {
   color: #fff5ff;
+}
+
+@media (max-width: 600px) {
+  .section-title {
+    font-size: 1.45rem;
+  }
+  .section-title--decor {
+    padding-top: 34px;
+  }
+  .section-title--decor::before {
+    height: 14px;
+  }
+  .section-title--decor::after {
+    top: 14px;
+    font-size: 0.72rem;
+  }
 }
 
 /* 課程分類按鈕列（熱門課程） */
@@ -1000,6 +1052,7 @@ ul {
 .featured-carousel {
   position: relative;
   margin-bottom: 24px;
+  /* 裁切軌道，避免所有輪播卡片露出到頁面範圍外 */
   overflow: hidden;
 }
 .featured-track {
@@ -1008,8 +1061,9 @@ ul {
   transition: transform 0.4s ease;
 }
 .featured-slide {
-  flex: 0 0 calc(20% - 16px);
-  min-width: 180px;
+  /* 精選課程：卡片寬度與熱門課程一致（桌機約一排 3 張） */
+  flex: 0 0 32%;
+  min-width: 280px;
 }
 .slide-placeholder {
   height: 200px;
@@ -1037,10 +1091,11 @@ ul {
   font-size: 1.5rem;
   cursor: pointer;
   box-shadow: var(--shadow);
-  z-index: 2;
+  /* 提高層級，避免被其他元素蓋住或裁切 */
+  z-index: 5;
 }
-.carousel-prev { left: -10px; }
-.carousel-next { right: -10px; }
+.carousel-prev { left: 8px; }
+.carousel-next { right: 8px; }
 .carousel-prev:hover,
 .carousel-next:hover {
   background: #ffffff;
