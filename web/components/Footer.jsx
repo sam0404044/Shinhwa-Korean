@@ -13,7 +13,7 @@ export default function Footer() {
         </div>
         <div className="footer-info">
           <p>@colajp.com</p>
-          <p>地址：（待填寫）</p>
+          <p>地址：813高雄市左營區至聖路63號</p>
           <p>電話：075507717</p>
           <p>（待確認）股份有限公司 附設神話韓語補習班</p>
         </div>

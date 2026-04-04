@@ -108,24 +108,56 @@ ul {
   -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 10px 30px rgba(124, 104, 182, 0.25);
   z-index: 1000;
+  overflow: visible;
 }
 
 .header-inner {
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
   padding: 0 20px;
+  box-sizing: border-box;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: visible;
 }
 
 .logo {
+  position: relative;
+  flex: 0 0 auto;
+  margin-right: auto;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+  /* 預留旋轉後橫向寬度（604/237×42）＋左右留白，避免裁切 */
+  min-width: calc(604 * 42px / 237 + 20px);
+  width: min(260px, 52vw);
+  padding-right: 8px;
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--color-primary);
   letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+/* LOGO.png 為直向畫布（237×604）、內容橫向；以中心為原點逆時針 90°，並用 left 對齊避免向左溢出裁切 */
+.logo__img {
+  position: absolute;
+  /* 旋轉後視覺寬度 ≈ 604/237×42，取半為中心點，+4px 與視窗左緣留縫 */
+  left: calc(604 * 42px / 237 / 2 + 4px);
+  top: 50%;
+  display: block;
+  width: 42px;
+  height: auto;
+  image-orientation: none;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center center;
+  object-fit: contain;
 }
 
 .nav-menu {
@@ -324,7 +356,7 @@ ul {
 
 .hero-overlay {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   width: 100%;
   min-height: 420px;
   display: flex;
@@ -385,7 +417,7 @@ ul {
   pointer-events: auto;
 }
 
-/* Hero 底部向下箭頭（圓形玻璃按鈕） */
+/* Hero 底部向下箭頭（圓形玻璃按鈕）：須高於底部波浪 SVG，才能完整顯示並可點擊 */
 .hero-scroll {
 	position: absolute;
 	bottom: 22px;
@@ -399,7 +431,7 @@ ul {
 	align-items: center;
 	justify-content: center;
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-	z-index: 1;
+	z-index: 5;
 }
 
 .hero-scroll span {
@@ -444,22 +476,104 @@ ul {
 }
 
 
-@media (max-width: 768px) {
+/* 手機／小平板：文案置頂置中；CTA 兩鈕直向靠右並略下移、內縮 10px */
+@media (max-width: 899px) {
   .hero-kolanee .hero-overlay--light {
-    /* 手機版也移除白色漸層，改為完全透明背景 */
     background: transparent;
   }
-  .hero-overlay h1 { font-size: 1.8rem; }
+
+  .hero {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .hero-bg img {
+    object-position: left center;
+  }
+
+  .hero-overlay {
+    min-height: 0;
+    box-sizing: border-box;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 32px 18px 110px;
+    margin-left: 0;
+  }
+
+  .hero-overlay h1 {
+    font-size: 1.8rem;
+    margin: 0 0 6px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-overlay p {
+    margin: 0 auto 16px;
+    max-width: 18em;
+    text-align: center;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 50px;
+    padding-right: 30px;
+    gap: 10px;
+  }
+
+  .hero-cta .btn-hero,
+  .hero-cta .btn-hero--outline {
+    width: auto;
+    max-width: min(260px, 78vw);
+    text-align: center;
+  }
 }
 
-/* 桌機版：HERO 文案靠右側排列 */
+/* 桌機版：HERO 文案置中；還原滿版構圖 */
 @media (min-width: 900px) {
+  .hero {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-bg img {
+    object-position: center;
+  }
+
   .hero-overlay {
     align-items: center;
     text-align: center;
     padding-right: 40px;
     padding-left: 40px;
+    padding-top: 32px;
+    padding-bottom: 32px;
     margin-left: 30px; /* 整塊略往右移動 */
+  }
+
+  .hero-overlay p {
+    max-width: none;
+  }
+
+  .hero-cta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: auto;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .hero-cta .btn-hero,
+  .hero-cta .btn-hero--outline {
+    max-width: none;
   }
 
   .hero-overlay h1 {
@@ -1140,13 +1254,15 @@ ul {
   margin-bottom: -1px;
 }
 
-/* Hero 下方的第一條波浪：
-   讓整個 SVG 完全疊在 Hero 上（不留下縫隙）
-   規則：margin-top = -1 * 當前 SVG 高度 */
-.wave-divider--overlap-top {
-  margin-top: -60px; /* -1 * 60px（預設高度） */
-  position: relative;
-  z-index: 2;        /* 蓋在 Hero 上層 */
+/* Hero 內第一條波浪：貼齊區塊底，疊在背景與文案之下、低於 .hero-scroll */
+.hero > .wave-divider--overlap-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* RWD：波浪彎度調整
@@ -1156,8 +1272,8 @@ ul {
   .wave-divider {
     height: 90px;
   }
-  .wave-divider--overlap-top {
-    margin-top: -90px; /* -1 * 90px（桌機高度） */
+  .hero > .wave-divider--overlap-top {
+    height: 90px;
   }
 }
 
@@ -1165,8 +1281,8 @@ ul {
   .wave-divider {
     height: 40px;
   }
-  .wave-divider--overlap-top {
-    margin-top: -40px; /* -1 * 40px（手機高度） */
+  .hero > .wave-divider--overlap-top {
+    height: 40px;
   }
 }
 
@@ -1507,9 +1623,6 @@ ul {
 @media (max-width: 600px) {
   .hero {
     min-height: calc(100vh - var(--header-h));
-  }
-  .hero-overlay h1 {
-    font-size: 1.8rem;
   }
   .float-trial-btn {
     bottom: 20px;

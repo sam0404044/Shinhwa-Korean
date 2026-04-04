@@ -11,7 +11,7 @@
     <link
       rel="icon"
       type="image/png"
-      href="assets/images/hero/hero-kdog-landing-desktop.png"
+      href="assets/images/LOGO/favicon.png"
     />
     <meta property="og:title" content="神話韓語" />
     <meta
@@ -29,7 +29,12 @@
     <!-- 選單列：登入前 -->
     <header class="site-header">
       <div class="header-inner">
-        <a href="index.html" class="logo">神話韓語</a>
+        <a href="index.html" class="logo"
+          ><img
+            src="assets/images/LOGO/LOGO.png"
+            alt="神話韓語"
+            class="logo__img"
+        /></a>
         <div class="search-wrap search-wrap-mobile">
           <input
             type="search"
@@ -132,45 +137,45 @@
             >
           </div>
         </div>
-        <!-- 向下指示箭頭：點擊滾動到熱門課程 -->
-        <a href="#courses" class="hero-scroll" aria-label="捲動到熱門課程">
-          <span></span>
-        </a>
-      </section>
-
-      <!-- Hero 與熱門課程之間的波浪分隔（往上重疊，並向下吃 1px 消除白線） -->
-      <svg
-        class="wave-divider wave-divider--overlap-top wave-divider--offset-down"
-        width="100%"
-        height="60px"
-        viewBox="0 0 100 50"
-        preserveAspectRatio="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient
-            id="grad-hotcourses-top"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="0%"
-          >
-            <stop offset="0%" stop-color="#7c68b6" />
-            <stop offset="35%" stop-color="#9e63d2" />
-            <stop offset="70%" stop-color="#ff8ac6" />
-            <stop offset="100%" stop-color="#ffd1f2" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M0,10 
+        <!-- Hero 底部波浪：放在區塊內且 z-index 低於箭頭，避免遮住按鈕 -->
+        <svg
+          class="wave-divider wave-divider--overlap-top wave-divider--offset-down"
+          width="100%"
+          height="60px"
+          viewBox="0 0 100 50"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient
+              id="grad-hotcourses-top"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" stop-color="#7c68b6" />
+              <stop offset="35%" stop-color="#9e63d2" />
+              <stop offset="70%" stop-color="#ff8ac6" />
+              <stop offset="100%" stop-color="#ffd1f2" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,10 
              Q 25,45 50,35 
              Q 75,25 100,10 
              L100,50 
              L0,50 
              Z"
-          fill="url(#grad-hotcourses-top)"
-        />
-      </svg>
+            fill="url(#grad-hotcourses-top)"
+          />
+        </svg>
+        <!-- 向下指示箭頭：點擊滾動到熱門課程 -->
+        <a href="#courses" class="hero-scroll" aria-label="捲動到熱門課程">
+          <span></span>
+        </a>
+      </section>
 
       <!-- 熱門課程（四張方卡：入門／文法／會話／檢定） -->
       <section class="section section-courses section--pastel" id="courses">
@@ -781,7 +786,7 @@
         </div>
         <div class="footer-info">
           <p>@colajp.com</p>
-          <p>地址：（待填寫）</p>
+          <p>地址：813高雄市左營區至聖路63號</p>
           <p>電話：075507717</p>
           <p>（待確認）股份有限公司 附設神話韓語補習班</p>
         </div>
