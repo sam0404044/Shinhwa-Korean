@@ -1,4 +1,6 @@
-const avatarBase = '/assets/images/testimonials';
+import { assetPath } from '../lib/paths';
+
+const avatarBase = assetPath('/assets/images/testimonials');
 
 export const testimonials = [
   {

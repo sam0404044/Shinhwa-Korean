@@ -12,10 +12,10 @@ export default function Footer() {
           </button>
         </div>
         <div className="footer-info">
-          <p>@colajp.com</p>
-          <p>地址：813高雄市左營區至聖路63號</p>
-          <p>電話：075507717</p>
-          <p>（待確認）股份有限公司 附設神話韓語補習班</p>
+          <p>電子信箱：待確認</p>
+          <p>地址：高雄市左營區至聖路 63 號</p>
+          <p>神話韓語興業有限公司（統一編號：12345678）</p>
+          <p>附設神話韓語短期補習班（電話：07-5507717）</p>
         </div>
       </div>
     </footer>

@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { testimonials } from '../../data/testimonials';
 
-export const metadata = { title: '學員見證 - 神話韓語' };
+export const metadata = { title: '수강생들의 리얼 후기 - 神話韓語' };
 
 export default function TestimonialsPage() {
   return (
     <main className="page-main">
       <section className="section section--pastel">
         <div className="container">
-          <h1 className="page-title section-title--green">學員見證</h1>
+          <h1 className="page-title section-title--green">수강생들의 리얼 후기</h1>
           <div className="testimonial-grid">
             {testimonials.map((t) => (
               <div key={t.id} className="testimonial-card">

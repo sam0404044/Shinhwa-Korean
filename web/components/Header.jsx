@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { assetPath } from '../lib/paths';
 
 export default function Header() {
   const [memberOpen, setMemberOpen] = useState(false);
@@ -10,7 +11,13 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="logo">神話韓語</Link>
+        <Link href="/" className="logo">
+          <img
+            src={assetPath('/assets/images/LOGO/LOGO.png')}
+            alt="神話韓語"
+            className="logo__img"
+          />
+        </Link>
         <div className="search-wrap search-wrap-mobile">
           <input type="search" className="search-input" placeholder="搜尋課程、文章" aria-label="搜尋" />
           <button type="button" className="search-btn" aria-label="搜尋">🔍</button>
@@ -22,6 +29,7 @@ export default function Header() {
             <li><Link href="/courses">課程列表</Link></li>
             <li><Link href="/news">最新消息</Link></li>
             <li><Link href="/testimonials">學員見證</Link></li>
+            <li><Link href="/contact">點我洽詢</Link></li>
           </ul>
           <ul className="nav-list nav-after-login is-hidden">
             <li className="nav-member">
@@ -45,7 +53,8 @@ export default function Header() {
                   <Link href="/member#coins">神話幣</Link>
                   <Link href="/member#scores">測驗成績</Link>
                 </div>
-                <Link href="/free-trial" className="dropdown-item">免費體驗</Link>
+                <Link href="/free-trial" className="dropdown-item">點我試聽</Link>
+                <Link href="/contact" className="dropdown-item">點我洽詢</Link>
                 <a href="#" className="dropdown-item logout">會員登出</a>
               </div>
             </li>

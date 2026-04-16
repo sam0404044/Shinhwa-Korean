@@ -1,7 +1,19 @@
+const repoName = 'Myth-Korean-Language-Teaching';
+const isProduction = process.env.NODE_ENV === 'production';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 若靜態資源在專案根目錄的 assets，可設 assetPrefix 或將 assets 複製到 public
   reactStrictMode: true,
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+  basePath: isProduction ? `/${repoName}` : '',
+  assetPrefix: isProduction ? `/${repoName}/` : '',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isProduction ? `/${repoName}` : '',
+  },
 };
 
 module.exports = nextConfig;

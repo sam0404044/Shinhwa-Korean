@@ -1,6 +1,10 @@
 import Link from 'next/link';
-import { getArticleById } from '../../../data/articles';
+import { articles, getArticleById } from '../../../data/articles';
 import { notFound } from 'next/navigation';
+
+export function generateStaticParams() {
+  return articles.map((article) => ({ id: String(article.id) }));
+}
 
 export async function generateMetadata({ params }) {
   const article = getArticleById(params.id);

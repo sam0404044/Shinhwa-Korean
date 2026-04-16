@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { instructors } from '../../data/instructors';
 
 export const metadata = { title: '師資介紹 - 神話韓語' };
 
@@ -8,13 +9,21 @@ export default function InstructorsPage() {
       <section className="section">
         <div className="container">
           <h1 className="page-title section-title--green">師資介紹</h1>
+          <p className="section-desc">真心對待，從老師到學員，都如家人親近。</p>
           <div className="instructor-grid">
-            <article className="instructor-card">
-              <Link href="/instructor/1"><div className="instructor-card__avatar" /><h3>教師姓名 1</h3><p>簡介（由後台提供）</p></Link>
-            </article>
-            <article className="instructor-card">
-              <Link href="/instructor/2"><div className="instructor-card__avatar" /><h3>教師姓名 2</h3><p>簡介（由後台提供）</p></Link>
-            </article>
+            {instructors.map((instructor) => (
+              <article key={instructor.id} className="instructor-card">
+                <Link href={`/instructor/${instructor.id}`}>
+                  <div
+                    className="instructor-card__avatar"
+                    style={{ backgroundImage: `url('${instructor.image}')` }}
+                  />
+                  <h3>{instructor.name}（{instructor.nationality}）</h3>
+                  <p>{instructor.tagline}</p>
+                  <p>{instructor.title}</p>
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
       </section>

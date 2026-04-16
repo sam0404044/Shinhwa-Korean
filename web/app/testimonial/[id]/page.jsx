@@ -1,6 +1,10 @@
 import Link from 'next/link';
-import { getTestimonialById } from '../../../data/testimonials';
+import { getTestimonialById, testimonials } from '../../../data/testimonials';
 import { notFound } from 'next/navigation';
+
+export function generateStaticParams() {
+  return testimonials.map((testimonial) => ({ id: String(testimonial.id) }));
+}
 
 export async function generateMetadata({ params }) {
   const t = getTestimonialById(params.id);

@@ -16,3 +16,7 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+
+# Local task notes
+TODO.md
+USER_ACTION_REQUIRED.md
