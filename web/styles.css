@@ -2994,3 +2994,15 @@ body {
 .wave-divider--gradient {
   color: #7c68b6;
 }
+
+.required-star {
+  color: #e53935;
+  font-weight: 800;
+  margin-left: 4px;
+}
+
+.label-hint {
+  color: var(--color-text-muted);
+  font-size: 0.9em;
+  font-weight: 500;
+}
