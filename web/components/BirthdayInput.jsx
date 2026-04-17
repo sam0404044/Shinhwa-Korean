@@ -18,6 +18,7 @@ export default function BirthdayInput() {
   return (
     <input
       id="reg-birthday"
+      className="date-input date-input--large"
       type="date"
       name="birthday"
       max={maxDate}

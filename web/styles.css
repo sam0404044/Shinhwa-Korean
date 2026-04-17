@@ -3006,3 +3006,9 @@ body {
   font-size: 0.9em;
   font-weight: 500;
 }
+
+.date-input--large {
+  min-height: 64px;
+  font-size: 1.12rem;
+  padding: 16px 20px;
+}
