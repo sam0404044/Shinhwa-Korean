@@ -7,11 +7,11 @@ export const metadata = {
 };
 
 const categoryImages = [
-  assetPath('/assets/images/courses/01.png'),
-  assetPath('/assets/images/courses/02.png'),
-  assetPath('/assets/images/courses/03.png'),
-  assetPath('/assets/images/courses/04.png'),
-  assetPath('/assets/images/courses/01.png'),
+  assetPath('/assets/images/courses/01.webp'),
+  assetPath('/assets/images/courses/02.webp'),
+  assetPath('/assets/images/courses/03.webp'),
+  assetPath('/assets/images/courses/04.webp'),
+  assetPath('/assets/images/courses/01.webp'),
 ];
 
 const tones = ['coral', 'purple', 'peach', 'mint', 'coral'];
