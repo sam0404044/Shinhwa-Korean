@@ -866,6 +866,8 @@ ul {
   align-items: center;
   justify-content: center;
   padding: 10px 12px;
+  min-height: 52px;
+  width: 100%;
   border-radius: 999px;
   background: #ffffff;
   border: 1px solid rgba(124, 104, 182, 0.3);
@@ -875,6 +877,9 @@ ul {
   position: relative;
   z-index: 0;
   overflow: hidden;
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
@@ -889,6 +894,13 @@ ul {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
+.course-category-card.is-active {
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(92, 75, 138, 0.22);
+}
+.course-category-card.is-active::before {
+  opacity: 1;
+}
 /* 熱門課程分類改為純白按鈕，不再顯示圖卡 */
 .course-category-card__img {
   display: none;
@@ -896,6 +908,11 @@ ul {
 .course-category-card__label {
   font-weight: 600;
   font-size: 0.95rem;
+}
+
+.course-showcase__action {
+  margin-top: 20px;
+  text-align: center;
 }
 
 .course-category-section {
@@ -1086,9 +1103,31 @@ ul {
     #ffd1f2 100%
   );
   color: #fdf4ff;
+  padding-bottom: 108px;
 }
 .section-courses .section-title {
   color: #fdf4ff;
+}
+
+.section-courses > .container,
+.section-news > .container {
+  position: relative;
+  z-index: 2;
+}
+
+.section-news {
+  padding-bottom: 112px;
+  padding-top: 92px;
+}
+
+.section-reasons {
+  padding-bottom: 112px;
+}
+
+.section-reasons > .container,
+.section-featured-carousel > .container {
+  position: relative;
+  z-index: 2;
 }
 
 .section-testimonials .btn,
@@ -1170,6 +1209,7 @@ ul {
     #ffd1f2 100%
   );
   color: #fdf4ff;
+  padding-bottom: 108px;
 }
 .section-featured-carousel .section-title {
   color: #fdf4ff;
@@ -1276,6 +1316,15 @@ ul {
   pointer-events: none;
 }
 
+.wave-divider--section-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* RWD：波浪彎度調整
    - 桌機：高度增加，曲線更彎
    - 手機：高度降低，曲線更平 */
@@ -1286,6 +1335,19 @@ ul {
   .hero > .wave-divider--overlap-top {
     height: 90px;
   }
+  .section-courses {
+    padding-bottom: 142px;
+  }
+  .section-news {
+    padding-bottom: 148px;
+    padding-top: 132px;
+  }
+  .section-reasons {
+    padding-bottom: 148px;
+  }
+  .section-featured-carousel {
+    padding-bottom: 142px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1295,6 +1357,19 @@ ul {
   .hero > .wave-divider--overlap-top {
     height: 40px;
   }
+  .section-courses {
+    padding-bottom: 84px;
+  }
+  .section-news {
+    padding-bottom: 78px;
+    padding-top: 64px;
+  }
+  .section-reasons {
+    padding-bottom: 78px;
+  }
+  .section-featured-carousel {
+    padding-bottom: 84px;
+  }
 }
 
 /* 首頁各區塊的底色改由各自的 section 類別決定（不再用奇偶數交錯配色） */
@@ -1303,7 +1378,7 @@ ul {
 .section--wave-block {
   /* 由內層 .section-wave-panel 負責留白；外層改成與波浪相同的深色，避免出現白色空帶 */
   padding: 0;
-  background: #130d27;
+  background: transparent;
 }
 
 .section-wave-panel {
@@ -1319,7 +1394,7 @@ ul {
   left: 0;
   width: 100%;
   height: 96px;
-  fill: #130d27;
+  fill: #ffffff;
   z-index: 1;
   pointer-events: none;
 }
@@ -2541,13 +2616,22 @@ body {
   overflow: hidden;
 }
 
+.hero-carousel__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
 .hero-carousel__track {
   position: absolute;
   inset: 0;
   z-index: 0;
   display: flex;
   width: 500%;
-  animation: heroSlide 30s infinite;
+  transition: transform 0.45s ease;
+  will-change: transform;
 }
 
 .hero-carousel__slide {
@@ -2581,14 +2665,38 @@ body {
   font-size: 1.35rem;
 }
 
-.hero-carousel__dots {
+.hero-carousel__controls {
   position: absolute;
-  left: 50%;
-  bottom: 34px;
+  right: 20px;
+  bottom: 30px;
   z-index: 3;
   display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-carousel__dots {
+  display: flex;
   gap: 12px;
-  transform: translateX(-50%);
+}
+
+.hero-carousel__arrow {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--color-primary-dark);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(80, 55, 134, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero-carousel__arrow:hover {
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .hero-carousel__dot {
@@ -2597,15 +2705,14 @@ body {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-@keyframes heroSlide {
-  0%, 16% { transform: translateX(0); }
-  20%, 36% { transform: translateX(-20%); }
-  40%, 56% { transform: translateX(-40%); }
-  60%, 76% { transform: translateX(-60%); }
-  80%, 96% { transform: translateX(-80%); }
-  100% { transform: translateX(0); }
+.hero-carousel__dot.is-active {
+  background: #7c68b6;
+  border-color: rgba(92, 75, 138, 0.55);
+  transform: scale(1.18);
 }
 
 .news-filter-row {
@@ -2633,13 +2740,19 @@ body {
 .reasons-list--detailed {
   display: grid;
   gap: 22px;
+  max-width: 1160px;
+  margin: 0 auto;
 }
 
 .reason-item--detailed {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
-  gap: 22px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 520px);
+  gap: 28px;
   align-items: center;
+}
+
+.reason-item--detailed:nth-child(even) .reason-gallery {
+  order: -1;
 }
 
 .reason-item--detailed h3 {
@@ -2649,8 +2762,8 @@ body {
 
 .reason-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
 }
 
 .reason-gallery img,
@@ -2812,9 +2925,24 @@ body {
     font-size: 2.2rem;
   }
 
+  .hero-carousel__controls {
+    right: 24px;
+    left: 24px;
+    bottom: 20px;
+    justify-content: space-between;
+  }
+
+  .hero-carousel__dots {
+    gap: 10px;
+  }
+
   .reason-item--detailed,
   .about-section-card {
     grid-template-columns: 1fr;
+  }
+
+  .reason-item--detailed:nth-child(even) .reason-gallery {
+    order: 0;
   }
 
   .form-inline-grid,

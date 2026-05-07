@@ -44,10 +44,23 @@ body:has(.admin-login-wrap) {
   overflow: auto;
   padding: 24px;
 }
+.admin-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
 .admin-page-title {
-  margin: 0 0 20px;
+  margin: 0;
   font-size: 1.35rem;
   color: #1a1d23;
+}
+.admin-page-desc {
+  margin: 8px 0 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 .admin-card {
   background: #fff;
@@ -55,6 +68,27 @@ body:has(.admin-login-wrap) {
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   margin-bottom: 20px;
   padding: 20px;
+}
+.admin-card--tight {
+  padding-top: 16px;
+}
+.admin-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.admin-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #1a1d23;
+}
+.admin-section-desc {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 .admin-table {
   width: 100%;
@@ -103,6 +137,11 @@ body:has(.admin-login-wrap) {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 20px;
+}
+.admin-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .admin-btn {
   display: inline-block;
@@ -161,3 +200,14 @@ body:has(.admin-login-wrap) {
 .admin-badge--on { background: #d4edda; color: #155724; }
 .admin-badge--off { background: #f8d7da; color: #721c24; }
 .admin-badge--pending { background: #fff3cd; color: #856404; }
+
+@media (max-width: 900px) {
+  .admin-page-header,
+  .admin-card__header {
+    flex-direction: column;
+  }
+
+  .admin-main {
+    padding: 18px;
+  }
+}

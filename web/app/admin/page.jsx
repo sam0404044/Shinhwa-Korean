@@ -1,22 +1,32 @@
 import Link from 'next/link';
 import { articles } from '../../data/articles';
 import { testimonials } from '../../data/testimonials';
+import {
+  AdminCard,
+  AdminPageShell,
+  AdminPrimaryLink,
+} from '../../components/admin/AdminScaffold';
 
 export const metadata = { title: '儀表板 - 神話韓語後台' };
 
 export default function AdminDashboardPage() {
-  const featuredCourses = [{ id: 1, title: '課程範例 1' }, { id: 2, title: '課程範例 2' }];
+  const featuredCourses = [
+    { id: 1, title: '零基礎韓語入門' },
+    { id: 2, title: '初級韓語（上）' },
+  ];
   const showTestimonials = testimonials.slice(0, 3);
   const showArticles = articles.slice(0, 3);
 
   return (
-    <>
-      <h1 className="admin-page-title">儀表板</h1>
-      <p style={{ marginBottom: '20px', color: '#666' }}>首頁呈現內容的後台設定。</p>
-
-      <div className="admin-card">
-        <h2 style={{ margin: '0 0 12px', fontSize: '1.1rem' }}>精選／熱門課程</h2>
-        <p style={{ marginBottom: '12px', fontSize: '0.9rem', color: '#666' }}>指定課程與排序（前台首頁輪播）</p>
+    <AdminPageShell
+      title="儀表板"
+      description="這裡集中整理首頁顯示內容與常用後台入口，之後新增任何後台頁面都沿用同一套版型。"
+    >
+      <AdminCard
+        title="精選課程設定"
+        description="快速查看目前首頁顯示的精選課程，並前往課程管理調整。"
+        actions={<AdminPrimaryLink href="/admin/courses">前往課程管理</AdminPrimaryLink>}
+      >
         <table className="admin-table">
           <thead>
             <tr>
@@ -26,20 +36,26 @@ export default function AdminDashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {featuredCourses.map((c, i) => (
-              <tr key={c.id}>
-                <td>{i + 1}</td>
-                <td>{c.title}</td>
-                <td><Link href="/admin/courses" className="admin-btn admin-btn--small admin-btn--secondary">編輯設定</Link></td>
+            {featuredCourses.map((course, index) => (
+              <tr key={course.id}>
+                <td>{index + 1}</td>
+                <td>{course.title}</td>
+                <td>
+                  <Link href="/admin/courses" className="admin-btn admin-btn--small admin-btn--secondary">
+                    編輯設定
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <p><Link href="/admin/courses" className="admin-btn admin-btn--primary">前往課程管理</Link></p>
-      </div>
+      </AdminCard>
 
-      <div className="admin-card">
-        <h2 style={{ margin: '0 0 12px', fontSize: '1.1rem' }}>學員見證摘要（首頁顯示）</h2>
+      <AdminCard
+        title="學員見證摘要"
+        description="快速查看首頁目前顯示的見證內容。"
+        actions={<AdminPrimaryLink href="/admin/testimonials">前往學員見證管理</AdminPrimaryLink>}
+      >
         <table className="admin-table">
           <thead>
             <tr>
@@ -49,20 +65,29 @@ export default function AdminDashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {showTestimonials.map((t) => (
-              <tr key={t.id}>
-                <td>{t.name}</td>
-                <td>{t.quoteShort?.slice(0, 40)}…</td>
-                <td><Link href={`/admin/testimonials/${t.id}/edit`} className="admin-btn admin-btn--small admin-btn--secondary">編輯</Link></td>
+            {showTestimonials.map((testimonial) => (
+              <tr key={testimonial.id}>
+                <td>{testimonial.name}</td>
+                <td>{testimonial.quoteShort?.slice(0, 40)}...</td>
+                <td>
+                  <Link
+                    href={`/admin/testimonials/${testimonial.id}/edit`}
+                    className="admin-btn admin-btn--small admin-btn--secondary"
+                  >
+                    編輯
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <p><Link href="/admin/testimonials" className="admin-btn admin-btn--primary">前往學員見證管理</Link></p>
-      </div>
+      </AdminCard>
 
-      <div className="admin-card">
-        <h2 style={{ margin: '0 0 12px', fontSize: '1.1rem' }}>最新文章／公告摘要（首頁顯示）</h2>
+      <AdminCard
+        title="最新文章摘要"
+        description="快速查看首頁目前引用的文章內容。"
+        actions={<AdminPrimaryLink href="/admin/articles">前往文章管理</AdminPrimaryLink>}
+      >
         <table className="admin-table">
           <thead>
             <tr>
@@ -72,17 +97,23 @@ export default function AdminDashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {showArticles.map((a) => (
-              <tr key={a.id}>
-                <td>{a.title}</td>
-                <td>{a.date}</td>
-                <td><Link href={`/admin/articles/${a.id}/edit`} className="admin-btn admin-btn--small admin-btn--secondary">編輯</Link></td>
+            {showArticles.map((article) => (
+              <tr key={article.id}>
+                <td>{article.title}</td>
+                <td>{article.date}</td>
+                <td>
+                  <Link
+                    href={`/admin/articles/${article.id}/edit`}
+                    className="admin-btn admin-btn--small admin-btn--secondary"
+                  >
+                    編輯
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <p><Link href="/admin/articles" className="admin-btn admin-btn--primary">前往文章管理</Link></p>
-      </div>
-    </>
+      </AdminCard>
+    </AdminPageShell>
   );
 }

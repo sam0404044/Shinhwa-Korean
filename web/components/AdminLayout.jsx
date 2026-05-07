@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 const nav = [
@@ -42,9 +42,8 @@ export default function AdminLayout({ children }) {
             </li>
           ))}
         </ul>
-        {/* 【暫時功能】完成真正登入系統後：登出改為呼叫 API 並導向登入頁，可刪除此註解 */}
         <div style={{ padding: '12px 20px 0', borderTop: '1px solid #333', marginTop: '12px' }}>
-          <Link href="/" style={{ color: '#b0b3b8', fontSize: '0.85rem' }}>← 回前台</Link>
+          <Link href="/" style={{ color: '#b0b3b8', fontSize: '0.85rem' }}>返回前台</Link>
           <button
             type="button"
             onClick={() => {
