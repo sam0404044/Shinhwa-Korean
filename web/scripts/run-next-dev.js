@@ -1,4 +1,5 @@
 const { spawn, spawnSync } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 
 function hasNonAscii(input) {
@@ -34,6 +35,11 @@ const devCwd = hasNonAscii(cwd) ? findAsciiWorkspaceDir(cwd) : cwd;
 if (!devCwd) {
   console.error('Unable to create an ASCII-safe path for Next.js dev server.');
   process.exit(1);
+}
+
+const nextCacheDir = path.join(devCwd, '.next');
+if (fs.existsSync(nextCacheDir)) {
+  fs.rmSync(nextCacheDir, { recursive: true, force: true });
 }
 
 const child = spawn('npm.cmd', ['run', 'dev:direct'], {

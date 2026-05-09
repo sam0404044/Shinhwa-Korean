@@ -11,26 +11,35 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="logo">
+        <Link href="/" className="logo" aria-label="神話韓語">
           <img
-            src={assetPath('/assets/images/LOGO/LOGO.png')}
+            src={assetPath('/assets/images/LOGO/NAVBAR_LOGO.png')}
             alt="神話韓語"
-            className="logo__img"
+            className="logo__wordmark"
           />
         </Link>
+
         <div className="search-wrap search-wrap-mobile">
-          <input type="search" className="search-input" placeholder="搜尋課程、文章" aria-label="搜尋" />
-          <button type="button" className="search-btn" aria-label="搜尋">🔍</button>
+          <input
+            type="search"
+            className="search-input"
+            placeholder="搜尋課程或文章"
+            aria-label="搜尋"
+          />
+          <button type="button" className="search-btn" aria-label="搜尋">
+            搜尋
+          </button>
         </div>
+
         <nav className={`nav-menu ${mobileOpen ? 'is-open-mobile' : ''}`}>
           <ul className="nav-list nav-before-login">
-            <li><Link href="/login">會員登入</Link></li>
             <li><Link href="/about">關於我們</Link></li>
             <li><Link href="/courses">課程列表</Link></li>
             <li><Link href="/news">最新消息</Link></li>
             <li><Link href="/testimonials">學員見證</Link></li>
             <li><Link href="/contact">點我洽詢</Link></li>
           </ul>
+
           <ul className="nav-list nav-after-login is-hidden">
             <li className="nav-member">
               <button
@@ -59,14 +68,28 @@ export default function Header() {
               </div>
             </li>
           </ul>
+
           <div className="nav-actions">
+            <Link href="/cart" className="cart-link" aria-label="購物車">
+              購物車
+            </Link>
             <div className="search-wrap">
-              <input type="search" className="search-input" placeholder="搜尋課程、文章" aria-label="搜尋" />
-              <button type="button" className="search-btn" aria-label="搜尋">🔍</button>
+              <input
+                type="search"
+                className="search-input"
+                placeholder="搜尋課程或文章"
+                aria-label="搜尋"
+              />
+              <button type="button" className="search-btn" aria-label="搜尋">
+                搜尋
+              </button>
             </div>
-            <Link href="/cart" className="cart-link" aria-label="購物車">🛒</Link>
+            <Link href="/login" className="header-login-btn">
+              會員登入
+            </Link>
           </div>
         </nav>
+
         <button
           type="button"
           className="mobile-menu-btn"

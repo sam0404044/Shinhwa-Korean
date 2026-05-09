@@ -10,14 +10,19 @@ export default function HeroCarousel({ slides, title, subtitle }) {
   const [dragOffset, setDragOffset] = useState(0);
   const pointerStartX = useRef(null);
   const isDragging = useRef(false);
+  const isSingleSlide = slides.length <= 1;
 
   useEffect(() => {
+    if (isSingleSlide) {
+      return undefined;
+    }
+
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % slides.length);
     }, 5000);
 
     return () => window.clearInterval(timer);
-  }, [slides.length]);
+  }, [isSingleSlide, slides.length]);
 
   const goToSlide = (index) => {
     setActiveIndex(index);
@@ -68,11 +73,11 @@ export default function HeroCarousel({ slides, title, subtitle }) {
     <>
       <div
         className="hero-carousel__viewport"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerEnd}
-        onPointerCancel={handlePointerEnd}
-        onPointerLeave={handlePointerEnd}
+        onPointerDown={isSingleSlide ? undefined : handlePointerDown}
+        onPointerMove={isSingleSlide ? undefined : handlePointerMove}
+        onPointerUp={isSingleSlide ? undefined : handlePointerEnd}
+        onPointerCancel={isSingleSlide ? undefined : handlePointerEnd}
+        onPointerLeave={isSingleSlide ? undefined : handlePointerEnd}
       >
         <div
           className="hero-carousel__track"
@@ -80,46 +85,70 @@ export default function HeroCarousel({ slides, title, subtitle }) {
             transform: `translateX(calc(${-100 * activeIndex}% + ${dragOffset}px))`,
           }}
         >
-          {slides.map((image, index) => (
-            <div
-              key={image}
-              className="hero-carousel__slide"
-              style={{ backgroundImage: `url('${image}')` }}
-              aria-hidden={index !== activeIndex}
-            />
-          ))}
+          {slides.map((slide, index) => {
+            const desktopImage = typeof slide === 'string' ? slide : slide.image;
+            const mobileImage = typeof slide === 'string' ? slide : slide.mobileImage || slide.image;
+
+            return (
+              <div
+                key={desktopImage}
+                className="hero-carousel__slide"
+                style={{
+                  '--hero-desktop-image': `url(${desktopImage})`,
+                  '--hero-mobile-image': `url(${mobileImage})`,
+                }}
+                aria-hidden={index !== activeIndex}
+              />
+            );
+          })}
         </div>
       </div>
 
       <div className="hero-overlay hero-overlay--light">
-        <h1>{title}</h1>
-        <p>{subtitle}</p>
+        {title ? <h1>{title}</h1> : null}
+        {subtitle ? <p>{subtitle}</p> : null}
         <div className="hero-cta">
-          <Link href="/free-trial" className="btn btn-hero">點我試聽</Link>
-          <Link href="/contact" className="btn btn-hero btn-hero--outline">點我洽詢</Link>
+          <Link href="/news" className="btn btn-hero">
+            最新消息
+          </Link>
+          <Link href="/courses" className="btn btn-hero btn-hero--outline">
+            課程列表
+          </Link>
         </div>
       </div>
 
-      <div className="hero-carousel__controls" aria-label="首頁輪播控制">
-        <button type="button" className="hero-carousel__arrow" onClick={goToPrevious} aria-label="上一張">
-          ‹
-        </button>
-        <div className="hero-carousel__dots" aria-label="首頁輪播分頁">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              className={`hero-carousel__dot${index === activeIndex ? ' is-active' : ''}`}
-              onClick={() => goToSlide(index)}
-              aria-label={`前往第 ${index + 1} 張`}
-              aria-pressed={index === activeIndex}
-            />
-          ))}
+      {!isSingleSlide ? (
+        <div className="hero-carousel__controls" aria-label="首頁圖片輪播">
+          <button
+            type="button"
+            className="hero-carousel__arrow"
+            onClick={goToPrevious}
+            aria-label="上一張"
+          >
+            &lt;
+          </button>
+          <div className="hero-carousel__dots" aria-label="選擇輪播圖片">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`hero-carousel__dot${index === activeIndex ? ' is-active' : ''}`}
+                onClick={() => goToSlide(index)}
+                aria-label={`第 ${index + 1} 張`}
+                aria-pressed={index === activeIndex}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="hero-carousel__arrow"
+            onClick={goToNext}
+            aria-label="下一張"
+          >
+            &gt;
+          </button>
         </div>
-        <button type="button" className="hero-carousel__arrow" onClick={goToNext} aria-label="下一張">
-          ›
-        </button>
-      </div>
+      ) : null}
     </>
   );
 }

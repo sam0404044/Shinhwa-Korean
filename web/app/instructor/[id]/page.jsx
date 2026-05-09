@@ -8,7 +8,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const instructor = getInstructorById(params.id);
-  if (!instructor) return { title: '教師介紹 - 神話韓語' };
+  if (!instructor) return { title: '師資介紹 - 神話韓語' };
   return { title: `${instructor.name} - 神話韓語` };
 }
 
@@ -20,22 +20,22 @@ export default function InstructorPage({ params }) {
     <main className="page-main">
       <section className="section">
         <div className="container container--narrow">
-          <p><Link href="/instructors">← 師資列表</Link></p>
+          <p><Link href="/instructors">返回師資列表</Link></p>
           <div className="instructor-detail">
             <div
               className="instructor-detail__avatar"
-              style={{ backgroundImage: `url('${instructor.image}')` }}
+              style={{ backgroundImage: `url(${instructor.image})` }}
             />
-            <h1 className="page-title">{instructor.name}（{instructor.nationality}）</h1>
-            <p className="section-desc">{instructor.tagline}</p>
-            <h2>教師背景</h2>
+            <h1 className="page-title">{instructor.name}</h1>
+            <p className="section-desc">{instructor.nationality}／{instructor.tagline}</p>
+            <h2>學經歷</h2>
             <ul>
               {instructor.education.map((item) => <li key={item}>{item}</li>)}
             </ul>
             <h2>介紹</h2>
             <p>{instructor.bio}</p>
-            <h2>授課課程推薦</h2>
-            <p><Link href="/courses">課程列表</Link></p>
+            <h2>相關課程</h2>
+            <p><Link href="/courses">前往課程列表</Link></p>
           </div>
         </div>
       </section>

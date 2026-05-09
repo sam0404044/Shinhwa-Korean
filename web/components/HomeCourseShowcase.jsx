@@ -9,7 +9,7 @@ function CourseCard({ course }) {
       <Link href={`/course/${course.id}`} className="course-card__link">
         <div
           className="course-card__img"
-          style={{ backgroundImage: `url('${course.image}')` }}
+          style={{ backgroundImage: `url(${course.image})` }}
         />
         <div className="course-card__body">
           <h3 className="course-card__title">{course.title}</h3>
@@ -53,7 +53,7 @@ export default function HomeCourseShowcase({
             >
               <div
                 className="course-category-card__img"
-                style={{ backgroundImage: `url('${categoryImages[index]}')` }}
+                style={{ backgroundImage: `url(${categoryImages[index]})` }}
               />
               <span className="course-category-card__label">{category.shortLabel}</span>
             </button>

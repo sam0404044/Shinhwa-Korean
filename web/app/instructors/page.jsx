@@ -16,11 +16,11 @@ export default function InstructorsPage() {
                 <Link href={`/instructor/${instructor.id}`}>
                   <div
                     className="instructor-card__avatar"
-                    style={{ backgroundImage: `url('${instructor.image}')` }}
+                    style={{ backgroundImage: `url(${instructor.image})` }}
                   />
-                  <h3>{instructor.name}（{instructor.nationality}）</h3>
+                  <h3>{instructor.name}</h3>
                   <p>{instructor.tagline}</p>
-                  <p>{instructor.title}</p>
+                  <p>{instructor.nationality}／{instructor.title}</p>
                 </Link>
               </article>
             ))}

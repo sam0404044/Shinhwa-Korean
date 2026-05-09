@@ -1,6 +1,6 @@
-/* ===== 變數與基礎 ===== */
+﻿
 :root {
-  /* 主要品牌色調：紫色＋粉色，呼應虹彩泡泡 */
+  
   --color-primary: #7c68b6;
   --color-primary-dark: #5c4b8a;
   --color-accent: #ff8ac6;
@@ -8,13 +8,13 @@
   --color-text-muted: #6e5f92;
   --color-bg: #f5f0ff;
   --color-white: #ffffff;
-  /* 中韓文通用無襯線黑體字型 */
+  
   --font-sans: "Noto Sans KR", "Noto Sans TC", "Apple SD Gothic Neo",
     "Malgun Gothic", "Microsoft JhengHei", sans-serif;
   --shadow: 0 2px 12px rgba(86, 54, 143, 0.18);
   --radius: 12px;
   --header-h: 64px;
-  /* 原本綠系變數，改為偏紫／粉的柔和色 */
+  
   --green-hero: #c6b5ff;
   --green-title: #7b63c4;
   --pastel-bg: rgba(255, 255, 255, 0.28);
@@ -23,7 +23,7 @@
   --peach: #f7d7c9;
   --mint: #c9f2e5;
 
-  /* 虹彩泡泡共用樣式變數 */
+  
   --bubble-bg-gradient: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.72) 0%,
@@ -52,7 +52,7 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   color: var(--color-text);
-  /* 回復純白底；小點改由特定區塊自行決定 */
+  
   background: #ffffff;
   padding-top: var(--header-h);
   min-height: 100vh;
@@ -75,7 +75,7 @@ ul {
   padding: 0 20px;
 }
 
-/* ===== 按鈕 ===== */
+/* ===== ?? ===== */
 .btn {
   display: inline-block;
   padding: 10px 24px;
@@ -96,7 +96,7 @@ ul {
   border: 2px solid var(--color-primary);
 }
 
-/* ===== 選單列 ===== */
+/* ===== ?詨??===== */
 .site-header {
   position: fixed;
   top: 0;
@@ -129,33 +129,21 @@ ul {
   position: relative;
   flex: 0 0 auto;
   margin-right: auto;
-  align-self: stretch;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  width: 164px;
+  height: 56px;
+  min-width: 164px;
   overflow: visible;
-  /* 預留旋轉後橫向寬度（604/237×42）＋左右留白，避免裁切 */
-  min-width: calc(604 * 42px / 237 + 20px);
-  width: min(260px, 52vw);
-  padding-right: 8px;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: 0.08em;
-  text-decoration: none;
 }
 
-/* LOGO.png 為直向畫布（237×604）、內容橫向；以中心為原點逆時針 90°，並用 left 對齊避免向左溢出裁切 */
-.logo__img {
+.logo__wordmark {
   position: absolute;
-  /* 旋轉後視覺寬度 ≈ 604/237×42，取半為中心點，+4px 與視窗左緣留縫 */
-  left: calc(604 * 42px / 237 / 2 + 4px);
+  left: 50%;
   top: 50%;
   display: block;
-  width: 42px;
+  width: 118px;
+  max-height: 48px;
   height: auto;
-  image-orientation: none;
-  transform: translate(-50%, -50%) rotate(-90deg);
+  transform: translate(-50%, -50%);
   transform-origin: center center;
   object-fit: contain;
 }
@@ -199,7 +187,7 @@ ul {
   color: var(--color-primary);
 }
 
-/* 登入後：會員下拉 */
+
 .nav-member {
   position: relative;
 }
@@ -272,11 +260,12 @@ ul {
   color: var(--color-accent);
 }
 
-/* 搜尋與購物車 */
+
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 0 0 auto;
 }
 
 .search-wrap {
@@ -305,12 +294,33 @@ ul {
 .cart-link {
   padding: 8px 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 .cart-link:hover {
   color: var(--color-primary);
 }
 
-/* 手機版：搜尋列在 header 內、漢堡左邊，僅小螢幕顯示 */
+.header-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7c68b6 0%, #9e63d2 52%, #ff8ac6 100%);
+  color: #ffffff;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 22px rgba(124, 104, 182, 0.28);
+}
+
+.header-login-btn:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(124, 104, 182, 0.34);
+}
+
+
 .search-wrap-mobile {
   display: none;
 }
@@ -324,10 +334,10 @@ ul {
   cursor: pointer;
 }
 
-/* ===== 主視覺 Hero（kolanee 風：單圖＋淺綠） ===== */
+
 .hero {
   position: relative;
-  /* 讓 Hero 佔滿可視高度（扣掉固定選單列高度） */
+  
   min-height: calc(100vh - var(--header-h));
   overflow: hidden;
   display: flex;
@@ -344,7 +354,7 @@ ul {
   inset: 0;
   margin: 0;
   padding: 0;
-  /* 避免背景圖層擋住可點擊元素（例如向下箭頭） */
+  
   pointer-events: none;
 }
 .hero-bg img {
@@ -368,7 +378,7 @@ ul {
 }
 .hero-overlay--light {
   color: var(--color-text);
-  /* 移除白色漸層覆蓋，改為透明背景，直接顯示 HERO 背景圖 */
+  
   background: transparent;
 }
 .hero-overlay h1 {
@@ -402,11 +412,11 @@ ul {
   border: 2px solid var(--green-title);
 }
 
-/* Hero 底部向下箭頭指示 */
+/* Hero 摨??蝞剝?內 */
 .hero-scroll-indicator {
   position: absolute;
   left: 50%;
-  bottom: 52px; /* 往上 20px */
+  bottom: 52px; 
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
@@ -417,7 +427,7 @@ ul {
   pointer-events: auto;
 }
 
-/* Hero 底部向下箭頭（圓形玻璃按鈕）：須高於底部波浪 SVG，才能完整顯示並可點擊 */
+
 .hero-scroll {
 	position: absolute;
 	bottom: 22px;
@@ -476,7 +486,7 @@ ul {
 }
 
 
-/* 手機／小平板：文案置頂置中；CTA 兩鈕直向靠右並略下移、內縮 10px */
+
 @media (max-width: 899px) {
   .hero-kolanee .hero-overlay--light {
     background: transparent;
@@ -535,7 +545,7 @@ ul {
   }
 }
 
-/* 桌機版：HERO 文案置中；還原滿版構圖 */
+
 @media (min-width: 900px) {
   .hero {
     align-items: center;
@@ -553,7 +563,7 @@ ul {
     padding-left: 40px;
     padding-top: 32px;
     padding-bottom: 32px;
-    margin-left: 30px; /* 整塊略往右移動 */
+    margin-left: 30px; /* ?游??亙??喟宏??*/
   }
 
   .hero-overlay p {
@@ -589,7 +599,7 @@ ul {
   }
 }
 
-/* ===== 區塊通用 ===== */
+
 .section {
   position: relative;
   padding: 48px 0;
@@ -597,7 +607,7 @@ ul {
   z-index: 0;
 }
 .section--pastel {
-  /* 預設：輕微玻璃感；首頁 Hero 下方的「熱門課程」會另外覆寫成紫粉漸層 */
+  
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -624,7 +634,7 @@ ul {
   margin-top: 4px;
 }
 
-/* ===== 進場動畫：每個區塊略有不同 ===== */
+
 
 @keyframes heroFadeUp {
   from {
@@ -696,7 +706,7 @@ ul {
   }
 }
 
-/* 白色按鈕 hover 時，漸層顏色左右流動的動畫 */
+
 @keyframes gradientFlow {
   0% {
     background-position: 0% 50%;
@@ -705,12 +715,12 @@ ul {
     background-position: 100% 50%;
   }
   100% {
-    /* 回到起點，形成左右來回的滑動感 */
+    
     background-position: 0% 50%;
   }
 }
 
-/* 白色按鈕 hover：漸層覆蓋在上方並緩慢往左流動 */
+
 .course-category-card::before,
 .section-testimonials .btn--green::before,
 .section-featured-carousel .btn-primary::before {
@@ -733,37 +743,40 @@ ul {
   animation: gradientFlow 4s linear infinite;
 }
 
-/* Hero 區：停用進場動畫，改為靜態呈現 */
+
 .hero-kolanee {
   opacity: 1;
 }
 
-/* 熱門課程：停用進場動畫 */
+
 .section-courses {
   opacity: 1;
 }
 
-/* 最新消息：停用進場動畫 */
+
 .section-news {
   opacity: 1;
 }
 
-/* 學員見證：停用進場動畫 */
+
 .section-testimonials {
   opacity: 1;
+  padding: 0;
+  background: transparent;
+  margin-top: -60px;
 }
 
-/* 五個理由：停用進場動畫 */
+
 .section-reasons {
   opacity: 1;
 }
 
-/* 精選課程輪播：停用進場動畫 */
+
 .section-featured-carousel {
   opacity: 1;
 }
 
-/* 所有 section 背景加上淡淡的小點裝飾 */
+
 .section::before {
   content: '';
   position: absolute;
@@ -775,7 +788,7 @@ ul {
   z-index: -1;
 }
 
-/* 裝飾型標題（參考示意圖：上方有刻度線與英文標籤） */
+
 .section-title--decor {
   position: relative;
   padding-top: 46px;
@@ -787,7 +800,7 @@ ul {
   left: 0;
   right: 0;
   height: 18px;
-  /* 只有細刻度線，沒有實心底色條 */
+  
   background: repeating-linear-gradient(
     to right,
     rgba(124, 104, 182, 0.45) 0,
@@ -803,7 +816,7 @@ ul {
 .section-title--decor::after {
   content: attr(data-en);
   position: absolute;
-  top: 20px; /* 避免文字疊到刻度線 */
+  top: 20px; 
   right: 20px;
   font-size: 0.85rem;
   letter-spacing: 0.16em;
@@ -812,7 +825,7 @@ ul {
   color: #ff3ad7;
 }
 
-/* 漸層色背景上的裝飾標題：刻度與標籤改為淺色系，提高對比 */
+
 .section-title--decor.section-title--on-gradient::before {
   background: repeating-linear-gradient(
     to right,
@@ -844,7 +857,7 @@ ul {
   }
 }
 
-/* 課程分類按鈕列（熱門課程） */
+
 .course-category-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -901,7 +914,7 @@ ul {
 .course-category-card.is-active::before {
   opacity: 1;
 }
-/* 熱門課程分類改為純白按鈕，不再顯示圖卡 */
+
 .course-category-card__img {
   display: none;
 }
@@ -926,7 +939,7 @@ ul {
   color: var(--green-title);
 }
 
-/* 精選課程網格 */
+
 .course-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -947,7 +960,7 @@ ul {
   color: #f5e9ff;
 }
 
-/* 最新消息寬卡（左文右圖） */
+
 .news-card {
   display: flex;
   align-items: center;
@@ -973,15 +986,6 @@ ul {
   font-size: 0.95rem;
   color: var(--color-text-muted);
 }
-.news-card__illus {
-  width: 200px;
-  height: 160px;
-  border-radius: 12px;
-  background-color: var(--mint);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
 .btn--small { padding: 8px 18px; font-size: 0.9rem; }
 .btn--green { border-color: var(--green-title); color: var(--green-title); }
 .btn--green:hover { background: var(--pastel-bg); }
@@ -989,10 +993,9 @@ ul {
 @media (max-width: 600px) {
   .news-card { flex-direction: column; text-align: center; }
   .news-card__text .section-title--left { text-align: center; }
-  .news-card__illus { width: 100%; max-width: 240px; }
 }
 
-/* 學員見證（圓形頭像） */
+
 .testimonial-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1065,7 +1068,7 @@ ul {
   color: var(--color-text-muted);
 }
 
-/* 學員見證區在漸層背景上，文字與按鈕提高對比 */
+
 .section-testimonials {
   color: #fdf4ff;
 }
@@ -1093,7 +1096,7 @@ ul {
   color: #ffffff;
 }
 
-/* Hero 下方緊接的「熱門課程」區：與學員見證同色的紫粉漸層 */
+
 .section-courses {
   background: linear-gradient(
     90deg,
@@ -1137,7 +1140,7 @@ ul {
   text-align: center;
 }
 
-/* 最新文章 */
+
 .article-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1157,7 +1160,7 @@ ul {
 }
 .article-card__img {
   width: 100%;
-  aspect-ratio: 4 / 3; /* 固定卡片比例 */
+  aspect-ratio: 4 / 3; /* ?箏??∠?瘥? */
   object-fit: cover;
   display: block;
 }
@@ -1171,7 +1174,7 @@ ul {
   font-size: 0.9rem;
 }
 
-/* 選擇神話的五個理由 */
+
 .reasons-list {
   max-width: 600px;
   margin: 0 auto;
@@ -1198,7 +1201,7 @@ ul {
   font-weight: 700;
 }
 
-/* 精選課程輪播（紫粉漸層條帶） */
+
 .section-featured-carousel {
   padding: 64px 0;
   background: linear-gradient(
@@ -1209,7 +1212,7 @@ ul {
     #ffd1f2 100%
   );
   color: #fdf4ff;
-  padding-bottom: 108px;
+  padding-bottom: 64px;
 }
 .section-featured-carousel .section-title {
   color: #fdf4ff;
@@ -1217,7 +1220,7 @@ ul {
 .featured-carousel {
   position: relative;
   margin-bottom: 24px;
-  /* 裁切軌道，避免所有輪播卡片露出到頁面範圍外 */
+  
   overflow: hidden;
 }
 .featured-track {
@@ -1226,7 +1229,7 @@ ul {
   transition: transform 0.4s ease;
 }
 .featured-slide {
-  /* 精選課程：卡片寬度與熱門課程一致（桌機約一排 3 張） */
+  
   flex: 0 0 32%;
   min-width: 280px;
 }
@@ -1256,7 +1259,7 @@ ul {
   font-size: 1.5rem;
   cursor: pointer;
   box-shadow: var(--shadow);
-  /* 提高層級，避免被其他元素蓋住或裁切 */
+  
   z-index: 5;
 }
 .carousel-prev { left: 8px; }
@@ -1266,7 +1269,7 @@ ul {
   background: #ffffff;
 }
 
-/* 精選課程區按鈕在漸層上加強對比，風格與學員見證一致 */
+
 .section-featured-carousel .btn-primary {
   background: #ffffff;
   color: #7c68b6;
@@ -1291,21 +1294,21 @@ ul {
   text-align: center;
 }
 
-/* 區塊之間的 SVG 波浪分隔，移除預設行內元素造成的空隙 */
+
 .wave-divider {
   display: block;
   margin: 0;
   line-height: 0;
   width: 100%;
-  height: 60px; /* 預設波浪高度（中等彎度） */
+  height: 60px; 
 }
 
-/* 讓波浪與下方區域略微重疊 1px，吃掉可能出現的細白線 */
+
 .wave-divider--offset-down {
   margin-bottom: -1px;
 }
 
-/* Hero 內第一條波浪：貼齊區塊底，疊在背景與文案之下、低於 .hero-scroll */
+
 .hero > .wave-divider--overlap-top {
   position: absolute;
   left: 0;
@@ -1325,9 +1328,7 @@ ul {
   pointer-events: none;
 }
 
-/* RWD：波浪彎度調整
-   - 桌機：高度增加，曲線更彎
-   - 手機：高度降低，曲線更平 */
+
 @media (min-width: 1024px) {
   .wave-divider {
     height: 90px;
@@ -1346,7 +1347,15 @@ ul {
     padding-bottom: 148px;
   }
   .section-featured-carousel {
-    padding-bottom: 142px;
+    padding-bottom: 72px;
+  }
+
+  .section-testimonials {
+    margin-top: -90px;
+  }
+
+  .section-wave-panel {
+    padding-top: 130px;
   }
 }
 
@@ -1368,15 +1377,23 @@ ul {
     padding-bottom: 78px;
   }
   .section-featured-carousel {
-    padding-bottom: 84px;
+    padding-bottom: 56px;
+  }
+
+  .section-testimonials {
+    margin-top: -40px;
+  }
+
+  .section-wave-panel {
+    padding-top: 80px;
   }
 }
 
-/* 首頁各區塊的底色改由各自的 section 類別決定（不再用奇偶數交錯配色） */
 
-/* ===== 學員見證區：內部深色波浪面板，上下都有弧形，且不覆蓋其他區段 ===== */
+
+
 .section--wave-block {
-  /* 由內層 .section-wave-panel 負責留白；外層改成與波浪相同的深色，避免出現白色空帶 */
+  
   padding: 0;
   background: transparent;
 }
@@ -1385,7 +1402,7 @@ ul {
   position: relative;
   width: 100%;
   margin: 0;
-  padding: 112px 0 120px;
+  padding: 100px 0 120px;
   overflow: hidden;
 }
 
@@ -1408,7 +1425,7 @@ ul {
 }
 
 .section-wave-panel--dark {
-  /* 學員見證主條：紫粉漸層條帶 */
+  
   background: linear-gradient(90deg, #7c68b6 0%, #9e63d2 35%, #ff8ac6 70%, #ffd1f2 100%);
 }
 
@@ -1417,7 +1434,7 @@ ul {
   z-index: 2;
 }
 
-/* 上下波浪弧形：用子元素當遮罩，只在本區塊內部，不蓋到其他 section */
+
 .section-wave-panel__top,
 .section-wave-panel__bottom {
   position: absolute;
@@ -1425,7 +1442,7 @@ ul {
   width: 140%;
   height: 120px;
   transform: translateX(-50%);
-  /* 使用深色覆蓋，與外層背景及 SVG 波浪顏色一致，避免白色間隙 */
+  
   background: #130d27;
   z-index: 1;
   pointer-events: none;
@@ -1433,7 +1450,7 @@ ul {
 
 .section-wave-panel__top {
   top: -70px;
-  /* 上方波浪：中間微微下凹的曲線 */
+  
   clip-path: polygon(
     0 50%,
     20% 60%,
@@ -1448,7 +1465,7 @@ ul {
 
 .section-wave-panel__bottom {
   bottom: -70px;
-  /* 下方波浪：與上方相反，微微上凸 */
+  
   clip-path: polygon(
     0 0,
     100% 0,
@@ -1461,20 +1478,20 @@ ul {
   );
 }
 
-/* ===== 點我試聽（右下角固定） ===== */
+
 .float-trial-btn {
   position: fixed;
   bottom: 32px;
   right: 32px;
   padding: 14px 28px;
-  /* 標準紅色按鈕，外圍有白色光暈 */
+  
   background: #e53935; /* material red 600 */
   color: var(--color-white);
   font-weight: 700;
   border-radius: 999px;
   box-shadow:
-    0 0 0 4px rgba(255, 255, 255, 0.7),   /* 外圈白色光暈 */
-    0 8px 24px rgba(229, 57, 53, 0.55);   /* 下方紅色陰影 */
+    0 0 0 4px rgba(255, 255, 255, 0.7),   /* 憭??質?? */
+    0 8px 24px rgba(229, 57, 53, 0.55);   
   z-index: 999;
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -1485,12 +1502,12 @@ ul {
     0 10px 30px rgba(229, 57, 53, 0.75);
 }
 
-/* ===== 頁尾 ===== */
+/* ===== ?偏 ===== */
 .site-footer {
   background: #130d27;
   color: #e3d9ff;
   padding: 16px 0;
-  margin-top: 32px;
+  margin-top: 0;
 }
 
 .footer-inner {
@@ -1559,7 +1576,7 @@ ul {
   margin: 2px 0;
 }
 
-/* ===== 彈窗：條款與隱私 ===== */
+
 .modal {
   position: fixed;
   inset: 0;
@@ -1642,9 +1659,9 @@ ul {
   color: var(--color-text-muted);
 }
 
-/* ===== 響應式 ===== */
+
 @media (max-width: 900px) {
-  /* 手機版：搜尋列與漢堡並排，搜尋在左、漢堡在右 */
+  
   .search-wrap-mobile {
     display: flex;
     flex: 1;
@@ -1662,7 +1679,7 @@ ul {
     right: 0;
     flex-direction: column;
     align-items: stretch;
-    /* 漢堡展開選單：延續 header 的淡紫粉漸層配色 */
+    
     background: linear-gradient(
       180deg,
       #fdfcff 0%,
@@ -1692,9 +1709,12 @@ ul {
   .nav-actions .search-wrap {
     display: none;
   }
-  /* 手機漢堡展開時的購物車列：置中、深色底、白色 ICON＋文字 */
+  
   .nav-actions {
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    gap: 10px;
   }
   .nav-actions .cart-link {
     display: inline-flex;
@@ -1711,9 +1731,12 @@ ul {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     font-size: 0.95rem;
   }
-  .nav-actions .cart-link::after {
-    content: '購物車';
-    font-size: 0.9rem;
+  .nav-actions .header-login-btn {
+    width: 100%;
+    max-width: 160px;
+    min-height: 42px;
+    padding: 0 16px;
+    font-size: 0.95rem;
   }
   .mobile-menu-btn {
     display: block;
@@ -1739,7 +1762,7 @@ ul {
   }
 }
 
-/* ===== 版面黏性 Footer ===== */
+
 .layout-wrap {
   min-height: 100vh;
   display: flex;
@@ -1749,7 +1772,7 @@ ul {
   flex: 1;
 }
 
-/* ===== 內頁通用 ===== */
+/* ===== ?折?? ===== */
 .page-main {
   min-height: 50vh;
 }
@@ -1769,7 +1792,7 @@ ul {
   color: var(--color-text-muted);
 }
 
-/* 登入/註冊/忘記密碼/重設 */
+
 .auth-section {
   padding: 48px 0;
 }
@@ -1819,7 +1842,7 @@ ul {
   text-align: center;
 }
 
-/* 關於我們 */
+
 .about-content h2 {
   margin: 24px 0 8px;
   font-size: 1.2rem;
@@ -1830,7 +1853,7 @@ ul {
   line-height: 1.6;
 }
 
-/* 課程卡片（列表/會員） */
+
 .course-card__link {
   display: block;
   color: inherit;
@@ -1867,7 +1890,7 @@ ul {
   margin-bottom: 8px;
 }
 
-/* 課程詳情 */
+
 .course-detail__wrap {
   display: flex;
   flex-wrap: wrap;
@@ -1940,7 +1963,7 @@ ul {
   color: var(--color-text-muted);
 }
 
-/* 課程播放頁 */
+
 .course-play__player {
   display: flex;
   flex-wrap: wrap;
@@ -1969,7 +1992,7 @@ ul {
   border-radius: 12px;
 }
 
-/* 購物車 */
+
 .cart-list {
   margin: 20px 0;
 }
@@ -2009,7 +2032,7 @@ ul {
   display: inline-block;
 }
 
-/* 結帳 */
+/* 蝯董 */
 .checkout-form .form-group {
   margin-bottom: 16px;
 }
@@ -2019,7 +2042,7 @@ ul {
   margin: 20px 0;
 }
 
-/* 付款結果 */
+/* 隞狡蝯? */
 .payment-result__msg {
   font-size: 1.1rem;
   margin-bottom: 16px;
@@ -2029,7 +2052,7 @@ ul {
   margin-bottom: 8px;
 }
 
-/* 方案頁 */
+/* ?寞???*/
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -2068,7 +2091,7 @@ ul {
   font-size: 1.2rem;
 }
 
-/* 會員中心：左側導覽 + 右側內容 */
+
 .section--member .container {
   max-width: none;
   padding: 0;
@@ -2194,7 +2217,7 @@ ul {
   overflow-x: auto;
 }
 
-/* 文章列表（news） */
+
 .article-card a {
   display: block;
   color: inherit;
@@ -2220,7 +2243,7 @@ ul {
   margin-bottom: 4px;
 }
 
-/* 文章內頁 */
+/* ???折? */
 .article-detail__meta {
   font-size: 0.9rem;
   color: var(--color-text-muted);
@@ -2246,7 +2269,7 @@ ul {
   font-size: 1.1rem;
 }
 
-/* 學員見證內頁 */
+
 .testimonial-detail {
   text-align: center;
   padding: 24px 0;
@@ -2297,7 +2320,7 @@ ul {
   font-weight: 600;
 }
 
-/* 師資列表 */
+/* 撣怨??” */
 .instructor-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -2345,9 +2368,9 @@ ul {
   line-height: 1.6;
 }
 
-/* ===== 虹彩泡泡覆蓋樣式（前台視覺全面換膚） ===== */
 
-/* 課程卡片、推薦卡等改為玻璃泡泡質感 */
+
+
 .course-card {
   border-radius: 24px;
   overflow: hidden;
@@ -2464,7 +2487,7 @@ ul {
   -webkit-backdrop-filter: blur(18px);
 }
 
-/* ===== 通用「泡泡」卡片 class，可在 JSX/HTML 直接加上使用 ===== */
+
 .bubble-iridescent {
   min-width: 220px;
   min-height: 140px;
@@ -2542,7 +2565,7 @@ ul {
   border: var(--bubble-border);
   box-shadow: var(--bubble-shadow), var(--bubble-inner-shadow-1);
   overflow: hidden;
-  /* 停用浮動動畫，改為靜態泡泡 */
+  
   transition: all 0.3s ease;
 }
 
@@ -2637,6 +2660,7 @@ body {
 .hero-carousel__slide {
   width: 20%;
   min-height: 100%;
+  background-image: var(--hero-desktop-image);
   background-position: center;
   background-size: cover;
 }
@@ -2915,14 +2939,49 @@ body {
     min-height: 620px;
   }
 
+  .hero-carousel__slide {
+    background-image: var(--hero-mobile-image);
+  }
+
   .hero-carousel .hero-overlay {
-    left: 24px;
-    right: 24px;
+    position: absolute;
+    inset: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    width: auto;
     max-width: none;
+    min-height: 100%;
+    margin-left: 0;
+    padding: 58px 20px 130px;
   }
 
   .hero-carousel .hero-overlay h1 {
-    font-size: 2.2rem;
+    width: min(100%, 11em);
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 2rem;
+    line-height: 1.25;
+  }
+
+  .hero-carousel .hero-cta {
+    position: static;
+    width: auto;
+    margin-top: 16px;
+    padding-right: 0;
+    align-self: center;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-carousel .hero-cta .btn-hero,
+  .hero-carousel .hero-cta .btn-hero--outline {
+    max-width: none;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    line-height: 1.15;
   }
 
   .hero-carousel__controls {
@@ -2953,6 +3012,19 @@ body {
   .float-cta-stack {
     right: 14px;
     bottom: 14px;
+    left: auto;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .float-cta-stack .float-trial-btn,
+  .float-contact-btn {
+    min-width: 86px;
+    width: auto;
+    padding: 9px 13px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    line-height: 1.15;
   }
 }
 
@@ -2971,8 +3043,8 @@ body {
   }
 
   .logo {
-    min-width: 210px;
-    width: 240px;
+    width: 164px;
+    min-width: 164px;
     margin-right: 18px;
   }
 
@@ -3105,6 +3177,159 @@ body {
   }
 }
 
+@media (max-width: 1180px) {
+  .header-inner {
+    padding: 0 20px;
+    gap: 12px;
+  }
+
+  .search-wrap-mobile {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0 12px;
+  }
+
+  .search-wrap-mobile .search-input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 16px;
+    min-width: 0;
+    max-height: 0;
+    padding: 0 16px;
+    overflow: hidden;
+    opacity: 0;
+    background: linear-gradient(180deg, #fdfcff 0%, #f5e8ff 35%, #ffe0f4 70%, #fff7ff 100%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: max-height 0.3s ease, opacity 0.2s, padding 0.2s ease;
+  }
+
+  .nav-menu.is-open-mobile {
+    max-height: 80vh;
+    padding: 16px;
+    opacity: 1;
+  }
+
+  .nav-menu .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav-menu .nav-list.is-hidden {
+    display: none !important;
+  }
+
+  .nav-list a {
+    padding: 8px 0;
+    white-space: normal;
+  }
+
+  .nav-actions {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-actions .search-wrap {
+    display: none;
+  }
+
+  .nav-actions .cart-link,
+  .nav-actions .header-login-btn {
+    width: 100%;
+    max-width: 160px;
+    min-height: 42px;
+    padding: 0 16px;
+    font-size: 0.95rem;
+  }
+
+  .nav-actions .cart-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #130d27;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .logo {
+    width: 136px;
+    min-width: 136px;
+    margin-right: 0;
+  }
+
+  .logo__wordmark {
+    width: 108px;
+    max-height: 44px;
+  }
+
+  .search-wrap-mobile {
+    flex: 1 1 126px;
+    max-width: 164px;
+    min-width: 0;
+    height: 42px;
+    margin: 0 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .search-wrap-mobile .search-input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
+  .search-wrap-mobile .search-input::placeholder {
+    font-size: 0.86rem;
+  }
+
+  .search-wrap-mobile .search-btn {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    height: 100%;
+    padding: 0;
+    border-left: 1px solid rgba(124, 104, 182, 0.18);
+    white-space: nowrap;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .mobile-menu-btn {
+    flex: 0 0 38px;
+    width: 38px;
+    padding: 8px 0;
+    text-align: center;
+  }
+}
+
 .wave-divider {
   color: #ffffff;
   background: transparent;
@@ -3140,3 +3365,4 @@ body {
   font-size: 1.12rem;
   padding: 16px 20px;
 }
+

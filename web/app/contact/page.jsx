@@ -34,9 +34,9 @@ export default function ContactPage() {
               <label htmlFor="contact-category">洽詢類別 <RequiredStar /></label>
               <select id="contact-category" name="category" required defaultValue="">
                 <option value="" disabled>請選擇</option>
-                <option value="course">課程相關問題</option>
-                <option value="feedback">意見回饋</option>
-                <option value="cooperation">合作邀約</option>
+                <option value="course">課程或教材問題</option>
+                <option value="feedback">意見或建議事項</option>
+                <option value="cooperation">合作或活動邀約</option>
                 <option value="other">其他</option>
               </select>
             </div>
@@ -50,11 +50,11 @@ export default function ContactPage() {
                 <strong className="captcha-code">59420</strong>
                 <input id="contact-captcha" name="captcha" type="text" required placeholder="請輸入驗證碼" />
               </div>
-              <button type="button" className="text-button">重新產生驗證碼</button>
+              <button type="button" className="text-button">換一個驗證碼</button>
             </div>
             <label className="checkbox-row">
               <input type="checkbox" name="agree" required />
-              <span>我同意送出上述資料供神話韓語聯繫使用 <RequiredStar /></span>
+              <span>我了解且同意服務使用條款與個人訊息處理之規範。<RequiredStar /></span>
             </label>
             <button type="submit" className="btn btn-primary btn--block">送出洽詢</button>
           </form>
