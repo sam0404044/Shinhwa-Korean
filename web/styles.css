@@ -778,6 +778,11 @@ ul {
   margin-top: -60px;
 }
 
+.section-testimonials .section-wave-panel {
+  margin-top: -8px;
+  padding-top: 108px;
+}
+
 
 .section-reasons {
   opacity: 1;
@@ -1369,6 +1374,11 @@ ul {
   .section-wave-panel {
     padding-top: 130px;
   }
+
+  .section-testimonials .section-wave-panel {
+    margin-top: -10px;
+    padding-top: 140px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1398,6 +1408,11 @@ ul {
 
   .section-wave-panel {
     padding-top: 80px;
+  }
+
+  .section-testimonials .section-wave-panel {
+    margin-top: -6px;
+    padding-top: 86px;
   }
 }
 
