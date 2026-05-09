@@ -4,8 +4,12 @@
 assets/
 ├─ images/
 │  ├─ hero/
-│  │  ├─ hero-kdog-landing-desktop.png   # 16:9 首屏主視覺（滿版）
-│  │  └─ hero-kdog-landing-mobile.png    # 4:5 / 9:16 手機主視覺（滿版）
+│  │  ├─ hero-kdog-landing-desktop-01.webp # 16:9 首屏輪播主視覺
+│  │  ├─ hero-kdog-landing-desktop-02.webp
+│  │  ├─ hero-kdog-landing-desktop-03.webp
+│  │  ├─ hero-kdog-landing-desktop-04.webp
+│  │  ├─ hero-kdog-landing-desktop-05.webp
+│  │  └─ hero-kdog-landing-mobile.webp     # 手機主視覺
 │  ├─ courses/
 │  │  ├─ beginner.png                    # 入門（構圖：狗+學習道具）
 │  │  ├─ grammar.png                     # 文法（狗+文法/句型視覺）

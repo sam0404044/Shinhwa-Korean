@@ -8,7 +8,7 @@ export default function NewsPage() {
     <main className="page-main">
       <section className="section">
         <div className="container">
-          <h1 className="page-title section-title--green">최신 소식 / 공지사항</h1>
+          <h1 className="page-title section-title--green">最新消息</h1>
           <div className="news-filter-row" aria-label="最新消息分類">
             {newsCategories.map((category) => (
               <Link key={category} href="/news" className="news-filter-chip">{category}</Link>

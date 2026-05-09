@@ -7,7 +7,23 @@ import { assetPath } from '../lib/paths';
 
 const heroSlides = [
   {
-    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop.webp'),
+    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop-01.webp'),
+    mobileImage: assetPath('/assets/images/hero/hero-kdog-landing-mobile.webp'),
+  },
+  {
+    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop-02.webp'),
+    mobileImage: assetPath('/assets/images/hero/hero-kdog-landing-mobile.webp'),
+  },
+  {
+    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop-03.webp'),
+    mobileImage: assetPath('/assets/images/hero/hero-kdog-landing-mobile.webp'),
+  },
+  {
+    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop-04.webp'),
+    mobileImage: assetPath('/assets/images/hero/hero-kdog-landing-mobile.webp'),
+  },
+  {
+    image: assetPath('/assets/images/hero/hero-kdog-landing-desktop-05.webp'),
     mobileImage: assetPath('/assets/images/hero/hero-kdog-landing-mobile.webp'),
   },
 ];
