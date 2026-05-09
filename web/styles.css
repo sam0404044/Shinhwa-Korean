@@ -279,7 +279,7 @@ ul {
   background-color: #ffffff !important;
 }
 .search-input {
-  width: 160px;
+  width: 190px;
   padding: 8px 12px;
   border: none;
   border-radius: 0;
@@ -299,7 +299,7 @@ ul {
   background: #ffffff !important;
   background-color: #ffffff !important;
   border: none;
-  border-left: 1px solid #111111;
+  border-left: 1px solid rgba(124, 104, 182, 0.18);
   cursor: pointer;
 }
 
@@ -2664,13 +2664,14 @@ body {
   inset: 0;
   z-index: 0;
   display: flex;
-  width: 500%;
+  width: 100%;
   transition: transform 0.45s ease;
   will-change: transform;
 }
 
 .hero-carousel__slide {
-  width: 20%;
+  flex: 0 0 100%;
+  width: 100%;
   min-height: 100%;
   background-image: var(--hero-desktop-image);
   background-position: center;
@@ -2963,29 +2964,38 @@ body {
 
   .hero-carousel .hero-overlay {
     position: absolute;
-    inset: 0;
-    left: 0;
-    right: 0;
+    top: 92px;
+    right: 28px;
+    bottom: auto;
+    left: auto;
     transform: none;
-    width: auto;
-    max-width: none;
-    min-height: 100%;
+    width: min(58vw, 250px);
+    max-width: 250px;
+    min-height: auto;
     margin-left: 0;
-    padding: 58px 20px 130px;
+    padding: 0;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .hero-carousel .hero-overlay h1 {
-    width: min(100%, 11em);
+    width: 100%;
     margin-right: auto;
     margin-left: auto;
-    font-size: 2rem;
+    font-size: 1.55rem;
     line-height: 1.25;
+  }
+
+  .hero-carousel .hero-overlay p {
+    margin-bottom: 12px;
+    font-size: 0.92rem;
+    line-height: 1.4;
   }
 
   .hero-carousel .hero-cta {
     position: static;
     width: auto;
-    margin-top: 16px;
+    margin-top: 0;
     padding-right: 0;
     align-self: center;
     flex-direction: row;

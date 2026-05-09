@@ -8,9 +8,16 @@ const SWIPE_THRESHOLD = 50;
 export default function HeroCarousel({ slides, title, subtitle }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
   const pointerStartX = useRef(null);
   const isDragging = useRef(false);
   const isSingleSlide = slides.length <= 1;
+
+  const restoreTransitionAfterJump = () => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setTransitionEnabled(true));
+    });
+  };
 
   useEffect(() => {
     if (isSingleSlide) {
@@ -18,24 +25,52 @@ export default function HeroCarousel({ slides, title, subtitle }) {
     }
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % slides.length);
+      setActiveIndex((current) => {
+        if (current === slides.length - 1) {
+          setTransitionEnabled(false);
+          restoreTransitionAfterJump();
+          return 0;
+        }
+
+        setTransitionEnabled(true);
+        return current + 1;
+      });
     }, 5000);
 
     return () => window.clearInterval(timer);
-  }, [isSingleSlide, slides.length]);
+  }, [activeIndex, isSingleSlide, slides.length]);
 
   const goToSlide = (index) => {
+    setTransitionEnabled(true);
     setActiveIndex(index);
     setDragOffset(0);
   };
 
   const goToPrevious = () => {
-    setActiveIndex((current) => (current - 1 + slides.length) % slides.length);
+    setActiveIndex((current) => {
+      if (current === 0) {
+        setTransitionEnabled(false);
+        restoreTransitionAfterJump();
+        return slides.length - 1;
+      }
+
+      setTransitionEnabled(true);
+      return current - 1;
+    });
     setDragOffset(0);
   };
 
   const goToNext = () => {
-    setActiveIndex((current) => (current + 1) % slides.length);
+    setActiveIndex((current) => {
+      if (current === slides.length - 1) {
+        setTransitionEnabled(false);
+        restoreTransitionAfterJump();
+        return 0;
+      }
+
+      setTransitionEnabled(true);
+      return current + 1;
+    });
     setDragOffset(0);
   };
 
@@ -83,6 +118,7 @@ export default function HeroCarousel({ slides, title, subtitle }) {
           className="hero-carousel__track"
           style={{
             transform: `translateX(calc(${-100 * activeIndex}% + ${dragOffset}px))`,
+            transition: transitionEnabled && dragOffset === 0 ? undefined : 'none',
           }}
         >
           {slides.map((slide, index) => {
