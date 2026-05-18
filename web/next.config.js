@@ -1,4 +1,4 @@
-const repoName = 'Myth-Korean-Language-Teaching';
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'Shinhwa-Korean';
 const isProduction = process.env.NODE_ENV === 'production';
 const distDir = process.env.NEXT_DIST_DIR || '.next';
 
