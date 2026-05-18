@@ -11,7 +11,9 @@ export default function ContactPage() {
         <div className="container container--narrow">
           <h1 className="page-title section-title--green">點我洽詢</h1>
           <p className="auth-form__desc">
-            如果您有任何課程、試聽、合作或其他問題，歡迎留下資料，我們會盡快與您聯繫。
+            親愛的朋友，안녕하세요（an-nyeong-ha-se-yo，您好）～
+            <br />
+            如果您有任何問題，請填寫以下訊息，我們將在收到訊息後盡速與您聯繫。感謝。
           </p>
           <form className="auth-form contact-form" action="#" method="post">
             <section className="form-note-block">

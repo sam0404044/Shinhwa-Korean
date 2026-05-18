@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { assetPath } from '../../lib/paths';
+import { instructors } from '../../data/instructors';
 
 export const metadata = { title: '關於我們 - 神話韓語' };
 
@@ -24,14 +24,11 @@ const sections = [
   },
 ];
 
-const contacts = [
-  '電子信箱：待確認',
-  '地址：高雄市左營區至聖路 63 號',
-  '神話韓語興業有限公司（統一編號：12345678）',
-  '附設神話韓語短期補習班（電話：07-5507717）',
-];
-
 export default function AboutPage() {
+  const visibleInstructors = instructors
+    .filter((instructor) => instructor.published)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
   return (
     <main className="page-main">
       <section className="section">
@@ -53,17 +50,39 @@ export default function AboutPage() {
               </article>
             ))}
 
-            <section className="about-contact">
-              <h2>聯絡資訊</h2>
-              {contacts.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
+            <section className="about-instructors" aria-labelledby="about-instructors-title">
+              <div className="about-instructors__header">
+                <p className="section-kicker">專業師資</p>
+                <h2 id="about-instructors-title">師資介紹</h2>
+                <p>
+                  臺籍與韓籍老師一起陪伴你，從語言基礎、文化理解到真實交流，把韓語學成能開口的能力。
+                </p>
+              </div>
+              <div className="about-instructor-list">
+                {visibleInstructors.map((instructor) => (
+                  <article key={instructor.id} className="about-instructor-row">
+                    <div className="about-instructor-row__media">
+                      <img src={instructor.image} alt={instructor.name} />
+                    </div>
+                    <div className="about-instructor-row__copy">
+                      <p className="about-instructor-row__tagline">{instructor.tagline}</p>
+                      <h3>{instructor.name}</h3>
+                      <p className="about-instructor-row__meta">
+                        {instructor.nationality}／{instructor.title}
+                      </p>
+                      <ul>
+                        {instructor.education.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                      <p>{instructor.bio}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </section>
-          </div>
 
-          <p>
-            <Link href="/instructors">查看師資介紹</Link>
-          </p>
+          </div>
         </div>
       </section>
     </main>

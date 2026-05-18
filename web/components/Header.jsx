@@ -70,9 +70,6 @@ export default function Header() {
           </ul>
 
           <div className="nav-actions">
-            <Link href="/cart" className="cart-link" aria-label="購物車">
-              購物車
-            </Link>
             <div className="search-wrap">
               <input
                 type="search"
@@ -84,6 +81,20 @@ export default function Header() {
                 搜尋
               </button>
             </div>
+            <Link href="/cart" className="cart-link" aria-label="購物車">
+              <svg
+                className="cart-link__icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M5.2 5.4h2l1.4 9.1a2 2 0 0 0 2 1.7h6.7a2 2 0 0 0 1.9-1.4l1.1-4.4H9.2" />
+                <path d="M7.2 5.4H4" />
+                <circle cx="10.7" cy="20" r="1.35" />
+                <circle cx="18" cy="20" r="1.35" />
+              </svg>
+              <span className="cart-link__badge">0</span>
+            </Link>
             <Link href="/login" className="header-login-btn">
               會員登入
             </Link>

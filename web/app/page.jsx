@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { articles, newsCategories } from '../data/articles';
+import { articles } from '../data/articles';
 import HeroCarousel from '../components/HeroCarousel';
 import HomeCourseShowcase from '../components/HomeCourseShowcase';
 import { courseCategories, courses } from '../data/courses';
@@ -39,11 +39,24 @@ const categoryImages = [
 const categoryTones = ['coral', 'purple', 'peach', 'mint', 'coral'];
 
 const testimonials = [
-  { image: assetPath('/assets/images/testimonials/avatar-01.webp'), text: '學員見證 1' },
-  { image: assetPath('/assets/images/testimonials/avatar-02.webp'), text: '學員見證 2' },
-  { image: assetPath('/assets/images/testimonials/avatar-03.webp'), text: '學員見證 3' },
-  { image: assetPath('/assets/images/testimonials/avatar-01.webp'), text: '學員見證 4' },
-  { image: assetPath('/assets/images/testimonials/avatar-02.webp'), text: '學員見證 5' },
+  {
+    image: assetPath('/assets/images/testimonials/avatar-01.webp'),
+    role: '上班族',
+    quote: '從發音開始學，現在可以聽懂簡單對話，追劇更有成就感！',
+    date: '2025.01.21',
+  },
+  {
+    image: assetPath('/assets/images/testimonials/avatar-02.webp'),
+    role: '工程師',
+    quote: '課程結構清楚，有講義也有測驗，TOPIK 初級考過了！',
+    date: '2025.07.16',
+  },
+  {
+    image: assetPath('/assets/images/testimonials/avatar-03.webp'),
+    role: 'UI/UX 設計師',
+    quote: '上了會話課之後，敢在見面會上說簡單的韓文了。',
+    date: '2025.01.09',
+  },
 ];
 
 const reasons = [
@@ -175,11 +188,6 @@ export default function HomePage() {
               <span className="btn btn-outline btn--small">閱讀更多</span>
             </div>
           </Link>
-          <div className="news-filter-row" aria-label="最新消息分類">
-            {newsCategories.map((category) => (
-              <Link key={category} href="/news" className="news-filter-chip">{category}</Link>
-            ))}
-          </div>
           <div className="article-grid">
             {articles.map((article) => (
               <article key={article.id} className="article-card">
@@ -187,7 +195,7 @@ export default function HomePage() {
                   <img src={article.image} alt={article.title} className="article-card__img" />
                   <h3>{article.title}</h3>
                   <p className="article-excerpt">{article.excerpt}</p>
-                  <p className="article-meta">{article.category} · {article.date}</p>
+                  <p className="article-meta">{article.date}</p>
                 </Link>
               </article>
             ))}
@@ -201,18 +209,20 @@ export default function HomePage() {
           <div className="section-wave-panel__inner container">
             <h2
               className="section-title section-title--green section-title--decor section-title--on-gradient"
-              data-en="수강생들의 리얼 후기"
+              data-en="學習者的聲音・實績"
             >
               學員見證
             </h2>
             <div className="testimonial-grid">
               {testimonials.map((testimonial, index) => (
-                <div key={`${testimonial.text}-${index}`} className="testimonial-card">
+                <div key={`${testimonial.role}-${index}`} className="testimonial-card">
                   <div
                     className="testimonial-card__avatar"
                     style={{ backgroundImage: `url(${testimonial.image})` }}
                   />
-                  <p>{testimonial.text}</p>
+                  <h3>{testimonial.role}</h3>
+                  <p className="testimonial-card__quote">「{testimonial.quote}」</p>
+                  <p className="testimonial-card__date">{testimonial.date}</p>
                 </div>
               ))}
             </div>
