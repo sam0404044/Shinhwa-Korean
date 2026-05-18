@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import BirthdayInput from '../../components/BirthdayInput';
+import MotivationField from '../../components/MotivationField';
 
 export const metadata = { title: '會員註冊 - 神話韓語' };
 
@@ -13,7 +14,7 @@ export default function RegisterPage() {
       <section className="section auth-section">
         <div className="container container--narrow">
           <h1 className="page-title">會員註冊</h1>
-          <p className="auth-form__desc">有 4 項必填，快加入我們。</p>
+          <p className="auth-form__desc">只有4 項必填，快加入我們。</p>
           <form className="auth-form" action="#" method="post">
             <div className="form-group">
               <label htmlFor="reg-name">姓名 <RequiredStar /> <span className="label-hint">請填寫真實姓名</span></label>
@@ -39,7 +40,7 @@ export default function RegisterPage() {
             <fieldset className="form-fieldset">
               <legend>地址</legend>
               <label><input type="radio" name="addressRegion" value="taiwan" /> 台灣</label>
-              <input type="text" name="taiwanAddress" placeholder="例：高雄市左營區博愛二路 1 號 1 樓" />
+              <input type="text" name="taiwanAddress" placeholder="例：臺北市中正區神話路一段1號1樓" />
               <label><input type="radio" name="addressRegion" value="overseas" /> 海外</label>
               <input type="text" name="overseasAddress" placeholder="請填寫海外地址" />
             </fieldset>
@@ -47,21 +48,7 @@ export default function RegisterPage() {
               <label htmlFor="reg-password">密碼 <RequiredStar /></label>
               <input id="reg-password" type="password" name="password" required placeholder="建議 8 碼以上，包含大小寫和數字" />
             </div>
-            <div className="form-group">
-              <label htmlFor="reg-motivation">學韓文的主要原因</label>
-              <select id="reg-motivation" name="motivation" defaultValue="">
-                <option value="" disabled>請選擇</option>
-                <option value="interest">興趣</option>
-                <option value="fan">追星</option>
-                <option value="travel">旅遊</option>
-                <option value="career">工作或升學</option>
-                <option value="other">其他</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-motivation-other">其他</label>
-              <textarea id="reg-motivation-other" name="motivationOther" rows={4} placeholder="請補充想學韓文的原因" />
-            </div>
+            <MotivationField />
             <button type="submit" className="btn btn-primary btn--block">註冊</button>
             <p className="auth-form__note">已經有帳號？<Link href="/login">前往登入</Link></p>
           </form>

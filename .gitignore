@@ -3,6 +3,7 @@ node_modules/
 
 # Build / cache
 .next/
+.next-dev/
 out/
 dist/
 *.log
@@ -11,6 +12,8 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+~$*
+~WRL*.tmp
 
 # IDE
 .vscode/*

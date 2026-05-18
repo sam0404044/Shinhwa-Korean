@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { articles } from '../../data/articles';
+import { courses } from '../../data/courses';
 import { testimonials } from '../../data/testimonials';
 import {
   AdminCard,
@@ -10,10 +11,7 @@ import {
 export const metadata = { title: '儀表板 - 神話韓語後台' };
 
 export default function AdminDashboardPage() {
-  const featuredCourses = [
-    { id: 1, title: '零基礎韓語入門' },
-    { id: 2, title: '初級韓語（上）' },
-  ];
+  const featuredCourses = courses.filter((course) => course.best).slice(0, 3);
   const showTestimonials = testimonials.slice(0, 3);
   const showArticles = articles.slice(0, 3);
 

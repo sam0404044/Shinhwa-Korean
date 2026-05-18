@@ -37,7 +37,12 @@ if (!devCwd) {
   process.exit(1);
 }
 
-const nextCacheDir = path.join(devCwd, '.next');
+const devEnv = {
+  ...process.env,
+  NEXT_DIST_DIR: '.next-dev',
+};
+
+const nextCacheDir = path.join(devCwd, devEnv.NEXT_DIST_DIR);
 if (fs.existsSync(nextCacheDir)) {
   fs.rmSync(nextCacheDir, { recursive: true, force: true });
 }
@@ -46,7 +51,7 @@ const child = spawn('npm.cmd', ['run', 'dev:direct'], {
   cwd: devCwd,
   stdio: 'inherit',
   shell: true,
-  env: process.env,
+  env: devEnv,
 });
 
 child.on('exit', (code) => {

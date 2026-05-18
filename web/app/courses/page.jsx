@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AddToCartButton from '../../components/AddToCartButton';
 import { courseCategories, courses } from '../../data/courses';
 import { assetPath } from '../../lib/paths';
 
@@ -73,7 +74,10 @@ export default function CoursesPage() {
                           ) : null}
                           {' '}NT$ {course.price.toLocaleString()}
                         </p>
-                        <button type="button" className="btn btn-primary btn--small">加入購物車</button>
+                        <AddToCartButton
+                          course={course}
+                          className="btn btn-primary btn--small"
+                        />
                       </div>
                     </Link>
                   </article>

@@ -58,7 +58,7 @@ export default function AboutPage() {
                 <p className="section-kicker">專業師資</p>
                 <h2 id="about-instructors-title" className="about-pill-title">師資介紹</h2>
                 <p>
-                  臺籍與韓籍老師一起陪伴你，從語言基礎、文化理解到真實交流，把韓語學成能開口的能力。
+                  真心對待，從老師到學員，都如家人親近
                 </p>
               </div>
               <div className="about-instructor-list">
@@ -70,9 +70,6 @@ export default function AboutPage() {
                     <div className="about-instructor-row__copy">
                       <p className="about-instructor-row__tagline">{instructor.tagline}</p>
                       <h3>{instructor.name}</h3>
-                      <p className="about-instructor-row__meta">
-                        {instructor.nationality}／{instructor.title}
-                      </p>
                       <ul>
                         {instructor.education.map((item) => (
                           <li key={item}>{item}</li>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import AddToCartButton from '../../../components/AddToCartButton';
 import { courses, getCourseById } from '../../../data/courses';
 
 export function generateStaticParams() {
@@ -38,8 +39,11 @@ export default function CourseDetailPage({ params }) {
             <aside className="course-detail__aside">
               <div className="course-detail__card">
                 <p className="course-detail__price">NT$ {course.price.toLocaleString()}</p>
-                <Link href="/plans" className="btn btn-primary btn--block">馬上購買</Link>
-                <button type="button" className="btn btn-outline btn--block">加入購物車</button>
+                <Link href={`/checkout?course=${course.id}`} className="btn btn-primary btn--block">馬上購買</Link>
+                <AddToCartButton
+                  course={course}
+                  className="btn btn-outline btn--block"
+                />
                 {course.hasTrial && <Link href="/free-trial" className="btn btn-hero--outline btn--block">試看課程</Link>}
               </div>
             </aside>

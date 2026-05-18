@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { articles } from '../data/articles';
 import HeroCarousel from '../components/HeroCarousel';
 import HomeCourseShowcase from '../components/HomeCourseShowcase';
+import ReasonsScrollSpy from '../components/ReasonsScrollSpy';
 import { courseCategories, courses } from '../data/courses';
 import { assetPath } from '../lib/paths';
 
@@ -64,30 +65,30 @@ const reasons = [
     title: '最迷人！閃閃發光的專業師資',
     text: '神話韓語師資萬中選一，老師從韓國首爾大學、東國大學等名校畢業，背景專業、熱情十足。臺籍、韓籍老師和您一起學習，一起體驗韓國，每堂課都是跨越疆界的真心相遇。',
     images: [
-      assetPath('/assets/images/testimonials/avatar-01.webp'),
-      assetPath('/assets/images/testimonials/avatar-02.webp'),
-      assetPath('/assets/images/testimonials/avatar-03.webp'),
+      assetPath('/assets/images/instructors/lena.webp'),
+      assetPath('/assets/images/instructors/kim-sumin.webp'),
+      assetPath('/assets/images/instructors/eo-yungyu.webp'),
     ],
   },
   {
     title: '最完整！步步精通的全面課程',
     text: '神話韓語從發音、初級、中級到高級，課程完整，加開旅遊會話、檢定考試、速成密集等主題課程。跟著神話韓語，之後能看韓劇、與韓國人真實對話，甚至長居韓國。',
-    images: [assetPath('/assets/images/courses/01.webp')],
+    images: [assetPath('/assets/images/reasons/reason-curriculum.png')],
   },
   {
     title: '最持久！滿滿成就的學習體驗',
     text: '神話韓語的學員能克服學語言兩大障礙：沒有太多時間、缺乏成就無法持久。我們的課程根據大腦與心理研究分堂分節，設計高效練習，讓學員始終保持活力，逐步精通韓語。',
-    images: [assetPath('/assets/images/courses/02.webp')],
+    images: [assetPath('/assets/images/reasons/reason-achievement.png')],
   },
   {
     title: '最入心！念念不忘的高效系統',
     text: '神話韓語獨家教材，精巧介面讓您快速了解韓語。每個例句乃至每個練習，都讓您更熟練韓語、了解韓國。線上學習自由安排時間，就算只有一點點時間，也能逐漸精通韓語。',
-    images: [assetPath('/assets/images/courses/03.webp')],
+    images: [assetPath('/assets/images/reasons/reason-system.png')],
   },
   {
     title: '最感動！時時有您的親切陪伴',
     text: '神話韓語開設學員專屬群組，可以提出學習問題，也可以交流韓國體驗。人生要轟轟烈烈追求夢想，現在給自己勇氣學韓語，您心動，我們陪您一起心動，一起創造感動。',
-    images: [assetPath('/assets/images/courses/04.webp')],
+    images: [assetPath('/assets/images/reasons/reason-community.png')],
   },
 ];
 
@@ -146,7 +147,7 @@ export default function HomePage() {
   const bestCourses = courses.filter((course) => course.best).slice(0, 3);
 
   return (
-    <main>
+    <main className="home-page">
       <section className="hero hero-kolanee hero-carousel">
         <HeroCarousel
           slides={heroSlides}
@@ -209,7 +210,7 @@ export default function HomePage() {
           <div className="section-wave-panel__inner container">
             <h2
               className="section-title section-title--green section-title--decor section-title--on-gradient"
-              data-en="學習者的聲音・實績"
+              data-en="수강생들의 리얼 후기"
             >
               學員見證
             </h2>
@@ -234,25 +235,13 @@ export default function HomePage() {
 
       <section className="section section-reasons dots-decor">
         <div className="container">
-          <h2 className="section-title section-title--decor" data-en="신화를 선택하는 이유">
+          <h2
+            className="section-title section-title--green section-title--decor"
+            data-en="신화를 선택하는 이유"
+          >
             選擇神話的理由
           </h2>
-          <div className="reasons-list reasons-list--detailed">
-            {reasons.map((reason, index) => (
-              <article key={reason.title} className="reason-item reason-item--detailed">
-                <div className="reason-item__copy">
-                  <span className="reason-num">{index + 1}</span>
-                  <h3>{reason.title}</h3>
-                  <p>{reason.text}</p>
-                </div>
-                <div className="reason-gallery">
-                  {reason.images.map((image) => (
-                    <img key={image} src={image} alt="" />
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
+          <ReasonsScrollSpy reasons={reasons} />
         </div>
         <SectionWaveDivider tone="gradient" id="reasons-featured" className="wave-divider--section-bottom" />
       </section>
