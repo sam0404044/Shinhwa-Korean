@@ -1,3 +1,5 @@
+import ContactCaptcha from '../../components/ContactCaptcha';
+
 export const metadata = { title: '點我洽詢 - 神話韓語' };
 
 function RequiredStar() {
@@ -46,14 +48,7 @@ export default function ContactPage() {
               <label htmlFor="contact-message">內容 <RequiredStar /></label>
               <textarea id="contact-message" name="message" required rows={6} />
             </div>
-            <div className="form-group">
-              <label htmlFor="contact-captcha">驗證碼 <RequiredStar /></label>
-              <div className="captcha-row">
-                <strong className="captcha-code">59420</strong>
-                <input id="contact-captcha" name="captcha" type="text" required placeholder="請輸入驗證碼" />
-              </div>
-              <button type="button" className="text-button">換一個驗證碼</button>
-            </div>
+            <ContactCaptcha />
             <label className="checkbox-row">
               <input type="checkbox" name="agree" required />
               <span>我了解且同意服務使用條款與個人訊息處理之規範。<RequiredStar /></span>

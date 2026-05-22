@@ -18,6 +18,7 @@ const scanExtensions = new Set([
 const ignoredDirs = new Set([
   '.git',
   '.next',
+  '.next-dev',
   'dist',
   'node_modules',
   'out',

@@ -1,15 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useCartCount } from '../lib/cart';
 import { assetPath } from '../lib/paths';
 
 export default function Header() {
+  const pathname = usePathname();
   const cartCount = useCartCount();
   const [memberOpen, setMemberOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const closeMobilePanels = () => {
+    setMobileOpen(false);
+    setMobileSearchOpen(false);
+    setMemberOpen(false);
+  };
 
   const toggleMobileMenu = () => {
     setMobileOpen((open) => !open);
@@ -20,6 +28,16 @@ export default function Header() {
     setMobileSearchOpen((open) => !open);
     setMobileOpen(false);
   };
+
+  const handleNavClick = (event) => {
+    if (event.target.closest('a')) {
+      closeMobilePanels();
+    }
+  };
+
+  useEffect(() => {
+    closeMobilePanels();
+  }, [pathname]);
 
   return (
     <header className="site-header">
@@ -66,7 +84,7 @@ export default function Header() {
           <span className="cart-link__badge">{cartCount}</span>
         </Link>
 
-        <nav className={`nav-menu ${mobileOpen ? 'is-open-mobile' : ''}`}>
+        <nav className={`nav-menu ${mobileOpen ? 'is-open-mobile' : ''}`} onClick={handleNavClick}>
           <Link href="/login" className="mobile-menu-login-card">
             <span className="mobile-menu-login-card__avatar">
               <img src={assetPath('/assets/images/LOGO/favicon-shinhwa.png')} alt="" />
@@ -148,6 +166,7 @@ export default function Header() {
           type="button"
           className="mobile-menu-btn"
           aria-label="開啟選單"
+          aria-expanded={mobileOpen}
           onClick={toggleMobileMenu}
         >
           ☰
@@ -169,7 +188,7 @@ export default function Header() {
               placeholder="搜尋課程、文章..."
               aria-label="搜尋課程或文章"
             />
-            <button type="button" className="mobile-search-submit" aria-label="搜尋">
+            <button type="button" className="mobile-search-submit" aria-label="搜尋" onClick={() => setMobileSearchOpen(false)}>
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <circle cx="11" cy="11" r="6.5" />
                 <path d="M16 16l4 4" />

@@ -1,4 +1,5 @@
 import Header from './Header';
+import Breadcrumb from './Breadcrumb';
 import Footer from './Footer';
 import ModalLegal from './ModalLegal';
 
@@ -7,6 +8,7 @@ export default function Layout({ children }) {
     <>
       <div className="layout-wrap">
         <Header />
+        <Breadcrumb />
         <main className="layout-main">{children}</main>
         <div className="float-cta-stack" aria-label="快速連結">
           <a href="/free-trial" className="float-trial-btn">點我試聽</a>

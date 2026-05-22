@@ -12,13 +12,21 @@ datasource db {
 
 // 會員（前台登入）
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
-  passwordHash String    @map("password_hash")
-  name         String?
-  status       String    @default("active") // active | suspended
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  passwordHash    String    @map("password_hash")
+  name            String?
+  gender          String?
+  birthday        DateTime? @db.Date
+  phone           String?
+  addressRegion   String?   @map("address_region")
+  taiwanAddress   String?   @map("taiwan_address")
+  overseasAddress String?   @map("overseas_address")
+  motivation      String?
+  motivationOther String?   @map("motivation_other")
+  status          String    @default("active") // active | suspended
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
   orders       Order[]
   subscriptions Subscription[]
 }
