@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { articles } from '../data/articles';
 import HeroCarousel from '../components/HeroCarousel';
+import HomeScrollTop from '../components/HomeScrollTop';
 import HomeCourseShowcase from '../components/HomeCourseShowcase';
 import ReasonsScrollSpy from '../components/ReasonsScrollSpy';
 import { courseCategories, courses } from '../data/courses';
@@ -148,6 +149,7 @@ export default function HomePage() {
 
   return (
     <main className="home-page">
+      <HomeScrollTop />
       <section className="hero hero-kolanee hero-carousel">
         <HeroCarousel
           slides={heroSlides}
