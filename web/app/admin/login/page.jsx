@@ -8,22 +8,30 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!email.trim() || !password) {
       setError('請輸入帳號與密碼');
       return;
     }
-    if (email === 'admin@shenhua.com' && password === 'admin123') {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('admin_token', '1');
-      }
-      router.push('/admin');
-      return;
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || '登入失敗。');
+      router.replace('/admin/courses');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
-    setError('帳號或密碼錯誤（示範：admin@shenhua.com / admin123）');
   };
 
   return (
@@ -45,17 +53,14 @@ export default function AdminLoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="admin123"
+            placeholder="請輸入後台密碼"
           />
         </div>
         {error && <p style={{ color: '#dc3545', fontSize: '0.9rem', marginBottom: '12px' }}>{error}</p>}
-        <button type="submit" className="admin-btn admin-btn--primary" style={{ width: '100%' }}>
-          登入
+        <button type="submit" className="admin-btn admin-btn--primary" style={{ width: '100%' }} disabled={submitting}>
+          {submitting ? '登入中…' : '登入'}
         </button>
       </form>
-      <p style={{ marginTop: '16px', fontSize: '0.85rem', color: '#666' }}>
-        示範帳密：admin@shenhua.com / admin123
-      </p>
     </div>
   );
 }

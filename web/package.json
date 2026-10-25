@@ -9,10 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "scan:mojibake": "node scripts/scan-mojibake.js",
+    "test:quiz": "node scripts/test-quiz-flow.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "node prisma/seed.js",
+    "db:seed:test-course": "node prisma/seed-test-course.js",
+    "db:seed:official-quiz": "node prisma/seed-official-quiz.js",
+    "db:seed:admin": "node prisma/seed-admin.js",
     "db:studio": "prisma studio"
   },
   "dependencies": {

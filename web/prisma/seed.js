@@ -1,24 +1,27 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
+const { randomBytes } = require('node:crypto');
 
 const prisma = new PrismaClient();
 
 async function main() {
   const hash = (pw) => bcrypt.hashSync(pw, 10);
 
-  // 後台管理者（登入帳密：admin@shenhua.com / admin123）
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD || randomBytes(18).toString('base64url');
+  const existingAdmin = await prisma.admin.findUnique({ where: { email: 'admin@shenhua.com' } });
   await prisma.admin.upsert({
     where: { email: 'admin@shenhua.com' },
     update: {},
     create: {
       email: 'admin@shenhua.com',
-      passwordHash: hash('admin123'),
+      passwordHash: hash(adminPassword),
       role: 'admin',
     },
   });
+  if (!existingAdmin) console.log(`後台管理員首次登入密碼：${adminPassword}`);
 
   // 會員
-  const u1 = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: 'user1@example.com' },
     update: {},
     create: {
@@ -28,7 +31,7 @@ async function main() {
       status: 'active',
     },
   });
-  const u2 = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: 'user2@example.com' },
     update: {},
     create: {
@@ -39,18 +42,7 @@ async function main() {
     },
   });
 
-  // 方案
-  await prisma.plan.createMany({
-    data: [
-      { name: '月訂閱', price: 399, period: 'month', description: '每月續訂，可隨時取消', published: true, sortOrder: 1 },
-      { name: '季訂閱', price: 999, period: 'quarter', description: '三個月方案', published: true, sortOrder: 2 },
-      { name: '年訂閱', price: 2999, period: 'year', description: '一年方案最划算', published: true, sortOrder: 3 },
-    ],
-    skipDuplicates: true,
-  });
-
   // 課程
-  const plans = await prisma.plan.findMany();
   await prisma.course.createMany({
     data: [
       { title: '課程範例 1', price: 1500, priceOriginal: 2000, description: '入門發音與基礎會話', category: 'beginner', published: true, sortOrder: 1, hasTrial: true },
@@ -83,28 +75,6 @@ async function main() {
     ],
     skipDuplicates: true,
   });
-
-  // 訂單與訂閱
-  if (plans[0] && plans[1]) {
-    try {
-      await prisma.order.createMany({
-        data: [
-          { orderNo: 'ORD001', userId: u1.id, planId: plans[0].id, amount: 399, status: 'paid', paidAt: new Date('2025-01-10T14:00:00') },
-          { orderNo: 'ORD002', userId: u2.id, planId: plans[1].id, amount: 999, status: 'paid', paidAt: new Date('2025-01-12T10:30:00') },
-        ],
-        skipDuplicates: true,
-      });
-      await prisma.subscription.createMany({
-        data: [
-          { userId: u1.id, planId: plans[0].id, startAt: new Date('2025-01-10'), endAt: new Date('2025-02-10'), status: 'active' },
-          { userId: u2.id, planId: plans[1].id, startAt: new Date('2025-01-12'), endAt: new Date('2025-04-12'), status: 'active' },
-        ],
-        skipDuplicates: true,
-      });
-    } catch (e) {
-      if (!e.message?.includes('Unique constraint')) throw e;
-    }
-  }
 
   // 文章
   await prisma.article.createMany({

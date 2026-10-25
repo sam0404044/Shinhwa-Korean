@@ -28,7 +28,7 @@ model User {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   orders       Order[]
-  subscriptions Subscription[]
+  quizAttempts QuizAttempt[]
 }
 
 // 後台管理者
@@ -55,6 +55,7 @@ model Course {
   updatedAt     DateTime @updatedAt @map("updated_at")
   chapters      CourseChapter[]
   instructors   InstructorCourse[]
+  orders        Order[]
 }
 
 // 章節/單元（綁定 Mux Playback ID）
@@ -62,48 +63,52 @@ model CourseChapter {
   id             Int     @id @default(autoincrement())
   courseId       Int     @map("course_id")
   title          String
+  description    String? @db.Text
+  durationMinutes Int?   @map("duration_minutes")
   muxPlaybackId  String? @map("mux_playback_id")
   sortOrder      Int     @default(0) @map("sort_order")
   course         Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions      QuizQuestion[]
+  quizAttempts   QuizAttempt[]
 }
 
-// 訂閱方案（規格：方案管理）
-model Plan {
-  id          Int      @id @default(autoincrement())
-  name        String
-  price       Int      // NT$
-  period      String   // month | quarter | year
-  description String?  @db.Text
-  published   Boolean  @default(true)
-  sortOrder   Int      @default(0) @map("sort_order")
-  orders      Order[]
-  subscriptions Subscription[]
+model QuizQuestion {
+  id           Int           @id @default(autoincrement())
+  sourceId     String?       @unique @map("source_id")
+  chapterId    Int           @map("chapter_id")
+  prompt       String        @db.Text
+  options      Json
+  correctIndex Int           @map("correct_index")
+  explanation  String?       @db.Text
+  sortOrder    Int           @default(0) @map("sort_order")
+  chapter      CourseChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
-// 訂單（金流：藍新/綠界 Webhook 更新狀態）
+model QuizAttempt {
+  id          Int           @id @default(autoincrement())
+  userId      Int           @map("user_id")
+  chapterId   Int           @map("chapter_id")
+  questions   Json
+  answers     Json?
+  score       Int?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  submittedAt DateTime?     @map("submitted_at")
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter     CourseChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+}
+
+// 單次購課訂單（金流：藍新/綠界 Webhook 更新狀態）
 model Order {
   id        Int      @id @default(autoincrement())
   orderNo   String   @unique @map("order_no") // 例 ORD001
   userId    Int      @map("user_id")
-  planId    Int      @map("plan_id")
+  courseId  Int      @map("course_id")
   amount    Int      // NT$
   status    String   @default("pending") // pending | paid | failed | refunded
   paidAt    DateTime? @map("paid_at")
   createdAt DateTime @default(now()) @map("created_at")
   user      User     @relation(fields: [userId], references: [id])
-  plan      Plan     @relation(fields: [planId], references: [id])
-}
-
-// 訂閱狀態（生效/到期/取消）
-model Subscription {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  planId    Int      @map("plan_id")
-  startAt   DateTime @map("start_at")
-  endAt     DateTime @map("end_at")
-  status    String   @default("active") // active | expired | cancelled
-  user      User     @relation(fields: [userId], references: [id])
-  plan      Plan     @relation(fields: [planId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
 }
 
 // 文章/最新訊息（規格：文章管理）

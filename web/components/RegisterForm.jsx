@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BirthdayInput from './BirthdayInput';
 import MotivationField from './MotivationField';
 
@@ -15,6 +16,7 @@ function valueFrom(formData, name) {
 }
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [birthday, setBirthday] = useState({ year: '', month: '', day: '' });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,9 +55,7 @@ export default function RegisterForm() {
         return;
       }
 
-      form.reset();
-      setBirthday({ year: '', month: '', day: '' });
-      setStatus({ type: 'success', message: '註冊成功，歡迎加入神話韓語。' });
+      router.replace('/login/');
     } catch (error) {
       setStatus({ type: 'error', message: '註冊服務暫時無法使用，請稍後再試。' });
     } finally {

@@ -1,0 +1,17 @@
+{
+  "course": {
+    "title": "零基礎韓語入門",
+    "description": "從世宗大王與韓文字的起源出發，認識訓民正音、基本母音與子音，適合第一次接觸韓語的學員。",
+    "price": 1500,
+    "priceOriginal": 2000,
+    "category": "pronunciation",
+    "hasTrial": true
+  },
+  "chapters": [
+    {
+      "title": "Unit 1 世宗大王與韓文字的開始",
+      "description": "認識世宗大王、訓民正音與韓文字的基本發音。",
+      "durationMinutes": 20
+    }
+  ]
+}

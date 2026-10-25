@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 import bcrypt from 'bcryptjs';
+import { createMemberSession, setMemberSession } from '../../../../lib/member-session';
 
 export async function POST(request) {
   try {
@@ -18,14 +19,14 @@ export async function POST(request) {
     if (user.status !== 'active') {
       return NextResponse.json({ ok: false, error: '帳號已停權' }, { status: 403 });
     }
-    return NextResponse.json({
+    return setMemberSession(NextResponse.json({
       ok: true,
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
       },
-    });
+    }), createMemberSession(user));
   } catch (e) {
     console.error(e);
     return NextResponse.json({ ok: false, error: '伺服器錯誤' }, { status: 500 });

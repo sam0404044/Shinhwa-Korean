@@ -22,11 +22,8 @@ export default function AdminMemberViewPage({ params }) {
             <tr><th>Email</th><td>{member.email}</td></tr>
             <tr><th>狀態</th><td><span className={`admin-badge admin-badge--${member.status === 'active' ? 'on' : 'off'}`}>{member.status === 'active' ? '啟用' : '停權'}</span></td></tr>
             <tr><th>註冊日</th><td>{member.createdAt}</td></tr>
-            <tr><th>目前方案</th><td>{member.planName || '-'}</td></tr>
-            <tr><th>方案到期</th><td>{member.planEnd || '-'}</td></tr>
           </tbody>
         </table>
-        <p style={{ marginTop: '16px' }}>手動開通／延長：需串接 API。</p>
         <div className="admin-actions">
           <Link href="/admin/members" className="admin-btn admin-btn--secondary">返回列表</Link>
         </div>

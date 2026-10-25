@@ -12,6 +12,7 @@ export default function Header() {
   const [memberOpen, setMemberOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [member, setMember] = useState(null);
 
   const closeMobilePanels = () => {
     setMobileOpen(false);
@@ -37,6 +38,20 @@ export default function Header() {
 
   useEffect(() => {
     closeMobilePanels();
+  }, [pathname]);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check' }),
+      cache: 'no-store',
+    }).then(async (response) => {
+      const result = response.ok ? await response.json() : null;
+      if (active) setMember(result?.member || null);
+    }).catch(() => { if (active) setMember(null); });
+    return () => { active = false; };
   }, [pathname]);
 
   return (
@@ -85,11 +100,11 @@ export default function Header() {
         </Link>
 
         <nav className={`nav-menu ${mobileOpen ? 'is-open-mobile' : ''}`} onClick={handleNavClick}>
-          <Link href="/login" className="mobile-menu-login-card">
+          <Link href={member ? '/member' : '/login'} className="mobile-menu-login-card">
             <span className="mobile-menu-login-card__avatar">
               <img src={assetPath('/assets/images/LOGO/favicon-shinhwa.png')} alt="" />
             </span>
-            <span>會員登入</span>
+            <span>{member ? '會員中心' : '會員登入'}</span>
           </Link>
 
           <ul className="nav-list nav-before-login">
@@ -155,8 +170,8 @@ export default function Header() {
               </svg>
               <span className="cart-link__badge">{cartCount}</span>
             </Link>
-            <Link href="/login" className="header-login-btn">
-              會員登入
+            <Link href={member ? '/member' : '/login'} className="header-login-btn">
+              {member ? '會員中心' : '會員登入'}
             </Link>
           </div>
 

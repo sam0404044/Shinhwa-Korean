@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,26 +10,33 @@ function RequiredStar() {
 
 export default function LoginForm() {
   const router = useRouter();
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const account = (form.querySelector('[name="email"]') || form.querySelector('[name="account"]'))?.value?.trim?.() ?? '';
-    const password = (form.querySelector('[name="password"]')?.value ?? '').trim();
-
-    if (account === 'AAA' && password === '123') {
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('admin_token', '1');
-      }
-      router.push('/admin');
-      return;
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setError('');
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.get('email'), password: form.get('password') }),
+      });
+      const result = await response.json();
+      if (response.status === 401) throw new Error('帳號或密碼錯誤');
+      if (!response.ok) throw new Error(result.error || '登入失敗。');
+      router.replace('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
-
-    form.submit();
-  };
+  }
 
   return (
-    <form className="auth-form" action="#" method="post" onSubmit={handleSubmit}>
+    <form className="auth-form" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="login-email">Email <RequiredStar /></label>
         <input id="login-email" type="text" name="email" required placeholder="請輸入 Email" autoComplete="username" />
@@ -37,7 +45,8 @@ export default function LoginForm() {
         <label htmlFor="login-password">密碼 <RequiredStar /></label>
         <input id="login-password" type="password" name="password" required placeholder="請輸入密碼" />
       </div>
-      <button type="submit" className="btn btn-primary btn--block">登入</button>
+      {error && <p className="auth-form__status auth-form__status--error" role="alert">{error}</p>}
+      <button type="submit" className="btn btn-primary btn--block" disabled={submitting}>{submitting ? '登入中…' : '登入'}</button>
       <p className="auth-form__note">
         <Link href="/forgot-password">忘記密碼？</Link>
       </p>
@@ -47,9 +56,6 @@ export default function LoginForm() {
       </p>
       <p className="auth-form__note">
         還沒有帳號？<Link href="/register">前往註冊</Link>
-      </p>
-      <p className="auth-form__note" style={{ fontSize: '0.85rem', color: '#888' }}>
-        測試用後台帳號：AAA / 密碼：123
       </p>
     </form>
   );

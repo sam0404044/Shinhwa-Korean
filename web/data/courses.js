@@ -1,17 +1,14 @@
 import { assetPath } from '../lib/paths';
+import testCourse from './test-course.json';
 
 export const courses = [
   {
     id: 1,
-    title: '零基礎韓語入門',
-    price: 1500,
-    priceOriginal: 2000,
-    description: '從韓文字母、發音規則到基本招呼與生活對話開始，適合第一次接觸韓語的學員。',
-    category: 'pronunciation',
+    ...testCourse.course,
+    chapters: testCourse.chapters,
     image: assetPath('/assets/images/courses/01.webp'),
     published: true,
     sortOrder: 1,
-    hasTrial: true,
     best: true,
   },
   {

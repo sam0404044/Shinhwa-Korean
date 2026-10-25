@@ -1,20 +1,31 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AdminRouteLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === '/admin/login';
+  const isLoginPage = pathname?.replace(/\/$/, '') === '/admin/login';
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     if (isLoginPage) return;
-    const token = typeof window !== 'undefined' ? window.localStorage.getItem('admin_token') : null;
-    if (!token) {
-      router.replace('/admin/login');
-    }
+    let active = true;
+    fetch('/api/admin/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check' }),
+      cache: 'no-store',
+    }).then((response) => {
+      if (!active) return;
+      if (response.ok) setAuthorized(true);
+      else router.replace('/admin/login');
+    }).catch(() => {
+      if (active) router.replace('/admin/login');
+    });
+    return () => { active = false; };
   }, [isLoginPage, router]);
 
-  return <>{children}</>;
+  return isLoginPage || authorized ? <>{children}</> : null;
 }

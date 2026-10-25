@@ -35,6 +35,23 @@ export default function CourseDetailPage({ params }) {
                 {' '}NT$ {course.price.toLocaleString()}
               </p>
               <p className="course-detail__desc">{course.description}</p>
+              {course.chapters?.length ? (
+                <div className="course-detail__block">
+                  <h2>課程章節</h2>
+                  <ol className="course-detail__chapters">
+                    {course.chapters.map((chapter, index) => (
+                      <li key={chapter.title} className="course-detail__chapter">
+                        <span className="course-detail__chapter-number">{String(index + 1).padStart(2, '0')}</span>
+                        <div>
+                          <h3>{chapter.title}</h3>
+                          <p>{chapter.description}</p>
+                        </div>
+                        <span className="course-detail__chapter-duration">{chapter.durationMinutes} 分鐘</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ) : null}
             </div>
             <aside className="course-detail__aside">
               <div className="course-detail__card">

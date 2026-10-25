@@ -1,0 +1,152 @@
+{
+  "source": "https://docs.google.com/spreadsheets/d/12at5H6wAbGm4YKs876Om-5lyGRZFSmHt4thxVMt2PA4/edit?gid=0",
+  "courseName": "零基礎韓語入門",
+  "category": "發音＋基本對話",
+  "unitName": "Unit 1 世宗大王與韓文字的開始",
+  "questions": [
+    {
+      "sourceId": "B001",
+      "prompt": "韓文字由哪一位朝鮮王朝君主下令學者創制？",
+      "options": [
+        "朝鮮太祖",
+        "朝鮮定宗",
+        "朝鮮太宗",
+        "朝鮮世宗"
+      ],
+      "correctIndex": 3,
+      "explanation": "韓文字由朝鮮王朝世宗大王（세종대왕）在1443年下令學者創制，1446年頒布。故選(D)。"
+    },
+    {
+      "sourceId": "B002",
+      "prompt": "朝鮮王朝君主創制훈민정음（訓民正音），對韓國的發展帶來深遠影響。훈민정음（訓民正音）的目的是什麼？",
+      "options": [
+        "教導百姓正當的倫理",
+        "教導百姓正式的禮儀",
+        "教導百姓正規的曆法",
+        "教導百姓正確的發音"
+      ],
+      "correctIndex": 3,
+      "explanation": "世宗大王為了使教育普及，便於治理，創制簡單的文字系統훈민정음（訓民正音），教導百姓正確的發音。故選(D)。"
+    },
+    {
+      "sourceId": "B003",
+      "prompt": "為什麼會講中文，學韓語就會特別簡單？",
+      "options": [
+        "韓文聲調與中文相似",
+        "韓文文法與中文相似",
+        "韓文詞彙漢字詞占60%~70%",
+        "韓文詞彙外來語占60%~70%"
+      ],
+      "correctIndex": 2,
+      "explanation": "韓文詞彙漢字詞占60%~70%，其他是固有語、外來語（多為英語）。只要會講中文，學韓語就會特別簡單。故選(C)。"
+    },
+    {
+      "sourceId": "B004",
+      "prompt": "韓國人的法律證件，人名有漢字；有些機構、地點等，也會用漢字。「漢字」一詞韓文是한자，怎麼發音？",
+      "options": [
+        "han ja",
+        "gwang hwa mun",
+        "gyeong bok gung",
+        "hun min jeong eum"
+      ],
+      "correctIndex": 0,
+      "explanation": "(A) han ja，漢字；(B) gwang hwa mun，光化門；(C) gyeong bok gung，景福宮；(D) hun min jeong eum，訓民正音。故選(A)。"
+    },
+    {
+      "sourceId": "B005",
+      "prompt": "韓文母音的基本結構是 •、ㅡ、ㅣ。此結構來自什麼形象？",
+      "options": [
+        "天地人",
+        "點線面",
+        "發音器官的位置",
+        "身體手腳的動作"
+      ],
+      "correctIndex": 0,
+      "explanation": "母音來自天地人形象：•（天）、ㅡ（地）、ㅣ（人）。故選(A)。"
+    },
+    {
+      "sourceId": "B006",
+      "prompt": "母音基本結構ㅣ和 • 可組成母音ㅏ。ㅏ怎麼發音？",
+      "options": [
+        "[a]",
+        "[o]",
+        "[g]",
+        "[ng]"
+      ],
+      "correctIndex": 0,
+      "explanation": "(A)母音ㅏ發音 [a]；(B)母音ㅗ發音 [o]；(C)子音ㄱ發音 [g]；(D)子音ㅇ發音 [ng]。故選(A)。"
+    },
+    {
+      "sourceId": "B007",
+      "prompt": "母音基本結構 • 和ㅡ可組成母音ㅗ。ㅗ怎麼發音？",
+      "options": [
+        "[a]",
+        "[o]",
+        "[g]",
+        "[ng]"
+      ],
+      "correctIndex": 1,
+      "explanation": "(A)母音ㅏ發音 [a]；(B)母音ㅗ發音 [o]；(C)子音ㄱ發音 [g]；(D)子音ㅇ發音 [ng]。故選(B)。"
+    },
+    {
+      "sourceId": "B008",
+      "prompt": "韓文子音有5個基本子音ㄱ、ㄴ、ㅁ、ㅅ、ㅇ。此形狀模仿什麼？",
+      "options": [
+        "天地人",
+        "點線面",
+        "發音器官的位置",
+        "身體手腳的動作"
+      ],
+      "correctIndex": 2,
+      "explanation": "子音形狀模仿發音器官的位置。ㄱ [g] 是舌根；ㄴ [n] 是舌尖；ㅁ [m] 是雙唇；ㅅ [s] 是牙齒；ㅇ [ng] 是喉嚨。故選(C)。"
+    },
+    {
+      "sourceId": "B009",
+      "prompt": "韓文子音ㄱ怎麼發音？",
+      "options": [
+        "[g]",
+        "[n]",
+        "[m]",
+        "[s]"
+      ],
+      "correctIndex": 0,
+      "explanation": "(A)ㄱ [g]；(B)ㄴ [n]；(C)ㅁ [m]；(D)ㅅ [s]。故選(A)。"
+    },
+    {
+      "sourceId": "B010",
+      "prompt": "韓文子音ㄴ怎麼發音？",
+      "options": [
+        "[g]",
+        "[n]",
+        "[m]",
+        "[s]"
+      ],
+      "correctIndex": 1,
+      "explanation": "(A)ㄱ [g]；(B)ㄴ [n]；(C)ㅁ [m]；(D)ㅅ [s]。故選(B)。"
+    },
+    {
+      "sourceId": "B011",
+      "prompt": "韓文子音ㅁ怎麼發音？",
+      "options": [
+        "[g]",
+        "[n]",
+        "[m]",
+        "[s]"
+      ],
+      "correctIndex": 2,
+      "explanation": "(A)ㄱ [g]；(B)ㄴ [n]；(C)ㅁ [m]；(D)ㅅ [s]。故選(C)。"
+    },
+    {
+      "sourceId": "B012",
+      "prompt": "韓文子音ㅅ怎麼發音？",
+      "options": [
+        "[g]",
+        "[n]",
+        "[m]",
+        "[s]"
+      ],
+      "correctIndex": 3,
+      "explanation": "(A)ㄱ [g]；(B)ㄴ [n]；(C)ㅁ [m]；(D)ㅅ [s]。故選(D)。"
+    }
+  ]
+}

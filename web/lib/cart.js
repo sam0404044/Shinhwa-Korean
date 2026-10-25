@@ -21,8 +21,18 @@ function writeCart(items) {
   window.dispatchEvent(new Event(CART_EVENT));
 }
 
+export function getCartItems() {
+  return readCart();
+}
+
 export function getCartCount() {
   return readCart().reduce((total, item) => total + (Number(item.quantity) || 0), 0);
+}
+
+export function removeCartItems(ids) {
+  if (typeof window === 'undefined') return;
+  const removeIds = new Set(ids.map((id) => String(id)));
+  writeCart(readCart().filter((item) => !removeIds.has(String(item.id))));
 }
 
 export function addCartItem(course) {
