@@ -134,13 +134,13 @@ body:has(.admin-login-wrap) {
 }
 .admin-actions {
   display: flex;
-  gap: 10px;
+  gap: var(--button-gap, 12px);
   flex-wrap: wrap;
   margin-top: 20px;
 }
 .admin-toolbar {
   display: flex;
-  gap: 10px;
+  gap: var(--button-gap, 12px);
   flex-wrap: wrap;
 }
 .admin-btn {
@@ -202,7 +202,7 @@ body:has(.admin-login-wrap) {
 .admin-badge--pending { background: #fff3cd; color: #856404; }
 
 .admin-table-wrap { overflow-x: auto; }
-.admin-row-actions { display: flex; gap: 8px; white-space: nowrap; }
+.admin-row-actions { display: flex; gap: var(--button-gap, 12px); white-space: nowrap; }
 .admin-delete-confirm {
   border: 1px solid #dc3545;
   background: #fff;
@@ -212,7 +212,7 @@ body:has(.admin-login-wrap) {
 }
 .admin-delete-confirm h2 { margin: 0 0 8px; font-size: 1.1rem; }
 .admin-delete-confirm p { margin: 0 0 16px; }
-.admin-delete-confirm__actions { display: flex; gap: 8px; justify-content: flex-end; }
+.admin-delete-confirm__actions { display: flex; gap: var(--button-gap, 12px); justify-content: flex-end; }
 .admin-error, .admin-notice {
   padding: 10px 12px;
   border-radius: 4px;

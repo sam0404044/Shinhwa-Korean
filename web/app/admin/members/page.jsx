@@ -37,9 +37,9 @@ function AdminMembersContent({ members }) {
                 <td>{m.name}</td>
                 <td>{m.email}</td>
                 <td><span className={`admin-badge admin-badge--${m.status === 'active' ? 'on' : 'off'}`}>{m.status === 'active' ? '啟用' : '停權'}</span></td>
-                <td>
+                <td className="admin-row-actions">
                   <Link href={`/admin/members/${m.id}`} className="admin-btn admin-btn--small admin-btn--secondary">檢視</Link>
-                  <button type="button" className="admin-btn admin-btn--small admin-btn--secondary" style={{ marginLeft: '4px' }} onClick={() => alert('停權/啟用需串接 API')}>停權/啟用</button>
+                  <button type="button" className="admin-btn admin-btn--small admin-btn--secondary" onClick={() => alert('停權/啟用需串接 API')}>停權/啟用</button>
                 </td>
               </tr>
             ))}

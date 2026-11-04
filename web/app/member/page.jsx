@@ -20,12 +20,15 @@ function courseByTitle(title) {
 }
 
 export default function MemberPage() {
-  const [panel, setPanel] = useState(() => (typeof window !== 'undefined' ? (window.location.hash?.slice(1) || 'my-courses') : 'my-courses'));
+  const [panel, setPanel] = useState('my-courses');
   const [orders, setOrders] = useState([]);
   const [localCourses, setLocalCourses] = useState([]);
 
   useEffect(() => {
-    setPanel(window.location.hash?.slice(1) || 'my-courses');
+    const hashPanel = window.location.hash.slice(1);
+    if (PANELS.some(({ id }) => id === hashPanel)) {
+      setPanel(hashPanel);
+    }
   }, []);
 
   useEffect(() => {
@@ -130,7 +133,11 @@ export default function MemberPage() {
           </nav>
           <div className="member-content">
             <div id="my-courses" className={`member-block ${panel === 'my-courses' ? 'is-visible' : ''}`}>
-              <h2>我的課程</h2>
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">學習空間</p>
+                <h2>我的課程</h2>
+                <p>從這裡繼續課程、查看章節與進入單元小考。</p>
+              </header>
               {courseRows.length ? (
                 <ul className="member-course-list">
                   {courseRows.map((course, index) => (
@@ -148,57 +155,97 @@ export default function MemberPage() {
                   ))}
                 </ul>
               ) : (
-                <p>完成購買後，課程會顯示在這裡。</p>
+                <div className="member-empty-state">
+                  <strong>還沒有已購買的課程</strong>
+                  <p>完成購買後，課程會顯示在這裡。</p>
+                  <Link href="/courses/" className="btn btn-outline btn--small">瀏覽課程</Link>
+                </div>
               )}
             </div>
             <div id="watch-history" className={`member-block ${panel === 'watch-history' ? 'is-visible' : ''}`}>
-              <h2>觀看紀錄</h2>
-              <p>最近觀看、續播。（由 API 提供）</p>
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">學習足跡</p>
+                <h2>觀看紀錄</h2>
+                <p>回到最近觀看的位置，接續你的學習節奏。</p>
+              </header>
+              <div className="member-empty-state">
+                <strong>尚無觀看紀錄</strong>
+                <p>開始觀看課程後，最近學習的內容會顯示在這裡。</p>
+                <button type="button" className="btn btn-outline btn--small" onClick={() => show('my-courses')}>前往我的課程</button>
+              </div>
             </div>
             <div id="account" className={`member-block ${panel === 'account' ? 'is-visible' : ''}`}>
-              <h2>帳號設定</h2>
-              <form className="auth-form">
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">個人資料</p>
+                <h2>帳號設定</h2>
+                <p>更新你的基本資料與登入帳號。</p>
+              </header>
+              <form className="auth-form member-account-form">
                 <div className="form-group"><label>姓名</label><input type="text" name="name" /></div>
                 <div className="form-group"><label>電子郵件</label><input type="email" name="email" /></div>
-                <button type="submit" className="btn btn-primary">儲存</button>
+                <div className="button-actions member-account__actions">
+                  <button type="submit" className="btn btn-primary">儲存</button>
+                  <button type="button" className="btn btn-outline" onClick={async () => {
+                    const response = await fetch('/api/auth/session', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ action: 'logout' }),
+                    });
+                    if (response.ok) window.location.assign('/');
+                  }}>登出</button>
+                </div>
               </form>
-              <button type="button" className="btn btn-outline" onClick={async () => {
-                const response = await fetch('/api/auth/session', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ action: 'logout' }),
-                });
-                if (response.ok) window.location.assign('/');
-              }}>登出</button>
             </div>
             <div id="orders" className={`member-block ${panel === 'orders' ? 'is-visible' : ''}`}>
-              <h2>購買紀錄</h2>
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">交易明細</p>
+                <h2>購買紀錄</h2>
+                <p>查看已完成付款的課程與訂單狀態。</p>
+              </header>
               {orders.length || localCourses.length ? (
-                <ul className="checkout-items">
+                <ul className="member-order-list">
                   {orders.map((order) => (
                     <li key={order.id}>
-                      <span>{order.courseTitle}</span>
-                      <span>NT$ {order.amount.toLocaleString()} · 已付款</span>
+                      <div><strong>{order.courseTitle}</strong><span>課程訂單</span></div>
+                      <span className="member-order-list__amount">NT$ {order.amount.toLocaleString()} <em>已付款</em></span>
                     </li>
                   ))}
                   {localCourses.map((course) => (
                     <li key={course.id}>
-                      <span>{course.title}</span>
-                      <span>NT$ {course.price.toLocaleString()} · 已付款</span>
+                      <div><strong>{course.title}</strong><span>課程訂單</span></div>
+                      <span className="member-order-list__amount">NT$ {course.price.toLocaleString()} <em>已付款</em></span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>尚無購買紀錄。</p>
+                <div className="member-empty-state">
+                  <strong>尚無購買紀錄</strong>
+                  <p>完成課程購買後，訂單資訊會顯示在這裡。</p>
+                </div>
               )}
             </div>
             <div id="coins" className={`member-block ${panel === 'coins' ? 'is-visible' : ''}`}>
-              <h2>神話幣</h2>
-              <p className="member-coins">目前神話幣：0（由 API 提供）</p>
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">會員回饋</p>
+                <h2>神話幣</h2>
+                <p>掌握目前可用的神話幣餘額。</p>
+              </header>
+              <div className="member-coins-card">
+                <span>目前餘額</span>
+                <strong>0</strong>
+                <small>神話幣</small>
+              </div>
             </div>
             <div id="scores" className={`member-block ${panel === 'scores' ? 'is-visible' : ''}`}>
-              <h2>測驗成績</h2>
-              <p><Link href="/member/quiz/" className="btn btn-primary btn--small">查看小考與成績</Link></p>
+              <header className="member-page-heading">
+                <p className="member-page-heading__eyebrow">學習成果</p>
+                <h2>測驗成績</h2>
+                <p>查看各單元小考的答題紀錄與成績。</p>
+              </header>
+              <div className="member-score-card">
+                <div><strong>單元小考</strong><span>每次隨機抽出 10 題，完成後即可查看結果。</span></div>
+                <Link href="/member/quiz/" className="btn btn-primary btn--small">查看小考與成績</Link>
+              </div>
             </div>
           </div>
         </div>

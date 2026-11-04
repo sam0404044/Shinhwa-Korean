@@ -21,8 +21,7 @@ export default function FreeTrialPage() {
                   />
                   <div className="course-card__body">
                     <h3 className="course-card__title">{course.title}</h3>
-                    <span className="course-card__badge">試聽</span>
-                    <button type="button" className="btn btn-outline btn--small">試聽</button>
+                    <span className="btn btn-outline btn--small">開始試聽</span>
                   </div>
                 </Link>
               </article>
