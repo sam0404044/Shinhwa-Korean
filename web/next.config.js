@@ -1,20 +1,19 @@
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'Shinhwa-Korean';
-const isProduction = process.env.NODE_ENV === 'production';
+const isStaticExport = process.env.STATIC_EXPORT === 'true';
 const distDir = process.env.NEXT_DIST_DIR || '.next';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   distDir,
-  output: 'export',
-  trailingSlash: true,
+  ...(isStaticExport ? { output: 'export', trailingSlash: true } : {}),
   images: {
     unoptimized: true,
   },
-  basePath: isProduction ? `/${repoName}` : '',
-  assetPrefix: isProduction ? `/${repoName}/` : '',
+  basePath: isStaticExport ? `/${repoName}` : '',
+  assetPrefix: isStaticExport ? `/${repoName}/` : '',
   env: {
-    NEXT_PUBLIC_BASE_PATH: isProduction ? `/${repoName}` : '',
+    NEXT_PUBLIC_BASE_PATH: isStaticExport ? `/${repoName}` : '',
   },
 };
 

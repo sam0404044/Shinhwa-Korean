@@ -17,7 +17,7 @@ export function createAdminSession(admin) {
 export function setAdminSession(response, token) {
   response.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.COOKIE_SECURE !== 'false',
     sameSite: 'strict',
     path: '/',
     maxAge: SESSION_SECONDS,
