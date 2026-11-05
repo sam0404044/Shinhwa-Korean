@@ -27,7 +27,8 @@ export default function LoginForm() {
       const result = await response.json();
       if (response.status === 401) throw new Error('帳號或密碼錯誤');
       if (!response.ok) throw new Error(result.error || '登入失敗。');
-      router.replace('/');
+      router.replace('/member');
+      router.refresh();
     } catch (err) {
       setError(err.message);
     } finally {
