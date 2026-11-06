@@ -3,7 +3,8 @@ import { clearMemberSession, getMember } from '../../../../lib/member-session';
 
 export async function POST(request) {
   const origin = request.headers.get('origin');
-  if (origin && origin !== new URL(request.url).origin) {
+  const host = request.headers.get('host');
+  if (origin && host && new URL(origin).host !== host) {
     return NextResponse.json({ error: '來源不符。' }, { status: 403 });
   }
   const body = await request.json().catch(() => ({}));

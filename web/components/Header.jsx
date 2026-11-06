@@ -46,6 +46,7 @@ export default function Header() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'check' }),
+      credentials: 'same-origin',
       cache: 'no-store',
     }).then(async (response) => {
       const result = response.ok ? await response.json() : null;

@@ -23,6 +23,7 @@ export default function LoginForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.get('email'), password: form.get('password') }),
+        credentials: 'same-origin',
       });
       const result = await response.json();
       if (response.status === 401) throw new Error('帳號或密碼錯誤');
