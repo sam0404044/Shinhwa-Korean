@@ -41,7 +41,8 @@ async function canStudy(course, memberId) {
 
 export async function POST(request) {
   const origin = request.headers.get('origin');
-  if (origin && origin !== new URL(request.url).origin) return json({ error: '來源不符。' }, 403);
+  const host = request.headers.get('host');
+  if (origin && host && new URL(origin).host !== host) return json({ error: '來源不符。' }, 403);
   const member = await getMember(request);
   if (!member) return json({ error: '請先登入會員。' }, 401);
 
