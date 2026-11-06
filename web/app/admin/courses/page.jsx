@@ -72,7 +72,7 @@ export default function AdminCoursesPage() {
         {loading ? <p>載入中…</p> : courses.length ? (
           <table className="admin-table">
             <thead>
-              <tr><th>排序</th><th>課程名稱</th><th>價格</th><th>分類</th><th>章節／題目</th><th>狀態</th><th>操作</th></tr>
+              <tr><th>排序</th><th>課程名稱</th><th>價格</th><th>分類</th><th>章節／題目</th><th>購買人數</th><th>狀態</th><th>操作</th></tr>
             </thead>
             <tbody>
               {courses.map((course) => (
@@ -82,6 +82,7 @@ export default function AdminCoursesPage() {
                   <td>NT$ {course.price.toLocaleString()}</td>
                   <td>{course.category}</td>
                   <td>{course.chapterCount}／{course.questionCount}</td>
+                  <td>{course.buyerCount} 人</td>
                   <td><span className={`admin-badge admin-badge--${course.published ? 'on' : 'off'}`}>{course.published ? '上架' : '下架'}</span></td>
                   <td className="admin-row-actions">
                     <Link href={`/admin/courses/manage?id=${course.id}`} className="admin-btn admin-btn--small admin-btn--secondary">編輯</Link>

@@ -127,14 +127,25 @@ export async function POST(request) {
   try {
     const body = await request.json();
     if (body.action === 'list') {
-      const courses = await prisma.course.findMany({
+      const [courses, buyerCounts] = await Promise.all([
+        prisma.course.findMany({
         orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
         include: { chapters: { select: { _count: { select: { questions: true } } } } },
-      });
+        }),
+        prisma.order.groupBy({
+          by: ['courseId', 'userId'],
+          where: { status: 'paid' },
+        }),
+      ]);
+      const buyersByCourse = buyerCounts.reduce((counts, order) => {
+        counts.set(order.courseId, (counts.get(order.courseId) || 0) + 1);
+        return counts;
+      }, new Map());
       return json({ courses: courses.map(({ chapters, ...course }) => ({
         ...course,
         chapterCount: chapters.length,
         questionCount: chapters.reduce((total, chapter) => total + chapter._count.questions, 0),
+        buyerCount: buyersByCourse.get(course.id) || 0,
       })) });
     }
 
