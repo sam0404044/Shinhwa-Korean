@@ -14,7 +14,7 @@ const categories = [
 
 const emptyCourse = () => ({
   title: '', description: '', price: '', priceOriginal: '', category: 'pronunciation',
-  sortOrder: 0, published: false, hasTrial: false, chapters: [],
+  sortOrder: 0, published: false, hasTrial: false, imageUrl: '', chapters: [],
 });
 const newKey = () => crypto.randomUUID();
 const emptyQuestion = () => ({ key: newKey(), prompt: '', options: ['', '', '', ''], correctIndex: 0, explanation: '' });
@@ -44,6 +44,15 @@ async function courseRequest(payload) {
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || '操作失敗。');
   return result;
+}
+
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await fetch('/api/admin/uploads', { method: 'POST', body: formData, credentials: 'same-origin' });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || '圖片上傳失敗。');
+  return result.url;
 }
 
 export default function AdminCourseEditor({ routeId }) {
@@ -106,6 +115,20 @@ export default function AdminCourseEditor({ routeId }) {
     }
   }
 
+  async function handleImageChange(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setError('');
+    setNotice('圖片上傳中…');
+    try {
+      setField('imageUrl', await uploadImage(file));
+      setNotice('圖片已上傳，儲存課程後會套用。');
+    } catch (err) {
+      setError(err.message);
+      setNotice('');
+    }
+  }
+
   if (loading) return <p>載入中…</p>;
   if (error && courseId && !course.title) return <p className="admin-error" role="alert">{error}</p>;
 
@@ -128,6 +151,11 @@ export default function AdminCourseEditor({ routeId }) {
               <label><input type="checkbox" checked={course.published} onChange={(event) => setField('published', event.target.checked)} /> 上架</label>
               <label><input type="checkbox" checked={course.hasTrial} onChange={(event) => setField('hasTrial', event.target.checked)} /> 提供試聽</label>
             </div>
+          </div>
+          <div className="form-row">
+            <label htmlFor="course-image">課程圖片</label>
+            <input id="course-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
+            {course.imageUrl ? <img src={course.imageUrl} alt="課程圖片預覽" style={{ width: '180px', height: '100px', objectFit: 'cover', marginTop: '8px', borderRadius: '6px' }} /> : null}
           </div>
           <div className="form-row"><label htmlFor="course-description">課程介紹</label><textarea id="course-description" value={course.description || ''} onChange={(event) => setField('description', event.target.value)} /></div>
         </section>

@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import { articles } from '../data/articles';
 import HeroCarousel from '../components/HeroCarousel';
 import HomeScrollTop from '../components/HomeScrollTop';
 import HomeCourseShowcase from '../components/HomeCourseShowcase';
 import ReasonsScrollSpy from '../components/ReasonsScrollSpy';
-import { courseCategories, courses } from '../data/courses';
+import { courseCategories, getHomeTestimonials, getPublishedArticles, getPublishedCourses } from '../lib/public-content';
 import { assetPath } from '../lib/paths';
 
 const heroSlides = [
@@ -39,27 +38,6 @@ const categoryImages = [
 ];
 
 const categoryTones = ['coral', 'purple', 'peach', 'mint', 'coral'];
-
-const testimonials = [
-  {
-    image: assetPath('/assets/images/testimonials/avatar-01.webp'),
-    role: '上班族',
-    quote: '從發音開始學，現在可以聽懂簡單對話，追劇更有成就感！',
-    date: '2025.01.21',
-  },
-  {
-    image: assetPath('/assets/images/testimonials/avatar-02.webp'),
-    role: '工程師',
-    quote: '課程結構清楚，有講義也有測驗，TOPIK 初級考過了！',
-    date: '2025.07.16',
-  },
-  {
-    image: assetPath('/assets/images/testimonials/avatar-03.webp'),
-    role: 'UI/UX 設計師',
-    quote: '上了會話課之後，敢在見面會上說簡單的韓文了。',
-    date: '2025.01.09',
-  },
-];
 
 const reasons = [
   {
@@ -144,8 +122,15 @@ function SectionWaveDivider({ tone = 'white', id = tone, className = '' }) {
   );
 }
 
-export default function HomePage() {
-  const bestCourses = courses.filter((course) => course.best).slice(0, 3);
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const [courses, articles, testimonials] = await Promise.all([
+    getPublishedCourses(),
+    getPublishedArticles(3),
+    getHomeTestimonials(3),
+  ]);
+  const bestCourses = courses.slice(0, 3);
 
   return (
     <main className="home-page">
@@ -217,15 +202,15 @@ export default function HomePage() {
               學員見證
             </h2>
             <div className="testimonial-grid">
-              {testimonials.map((testimonial, index) => (
-                <div key={`${testimonial.role}-${index}`} className="testimonial-card">
+              {testimonials.map((testimonial) => (
+                <div key={testimonial.id} className="testimonial-card">
                   <div
                     className="testimonial-card__avatar"
-                    style={{ backgroundImage: `url(${testimonial.image})` }}
-                  />
-                  <h3>{testimonial.role}</h3>
-                  <p className="testimonial-card__quote">「{testimonial.quote}」</p>
-                  <p className="testimonial-card__date">{testimonial.date}</p>
+                    style={{ backgroundImage: testimonial.avatarUrl ? `url(${testimonial.avatarUrl})` : undefined }}
+                  >{!testimonial.avatarUrl ? <span className="testimonial-card__initials">{testimonial.name.charAt(0)}</span> : null}</div>
+                  <h3>{testimonial.role || testimonial.name}</h3>
+                  <p className="testimonial-card__quote">「{testimonial.quoteShort || testimonial.quote}」</p>
+                  <p className="testimonial-card__date">{testimonial.industry || testimonial.name}</p>
                 </div>
               ))}
             </div>

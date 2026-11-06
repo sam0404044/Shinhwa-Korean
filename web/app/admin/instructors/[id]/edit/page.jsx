@@ -1,72 +1,19 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+const emptyInstructor = { name: '', title: '', bio: '', avatarUrl: '', published: true, sortOrder: 0, courseIds: [] };
+const request = async (body) => { const response = await fetch('/api/admin/instructors', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(body) }); const data = await response.json(); if (!response.ok) throw new Error(data.error || '操作失敗。'); return data; };
+const upload = async (file) => { const formData = new FormData(); formData.append('file', file); const response = await fetch('/api/admin/uploads', { method: 'POST', credentials: 'same-origin', body: formData }); const data = await response.json(); if (!response.ok) throw new Error(data.error || '圖片上傳失敗。'); return data.url; };
 
 export default function AdminInstructorEditPage() {
-  const params = useParams();
-  const router = useRouter();
-  const id = params.id;
-  const isNew = id === 'new';
-  const [name, setName] = useState('');
-  const [title, setTitle] = useState('');
-  const [bio, setBio] = useState('');
-  const [published, setPublished] = useState(true);
-  const [loading, setLoading] = useState(!isNew);
-
-  useEffect(() => {
-    if (isNew) {
-      setLoading(false);
-      return;
-    }
-    import('../../../../../data/instructors').then(({ getInstructorById }) => {
-      const i = getInstructorById(id);
-      if (i) {
-        setName(i.name);
-        setTitle(i.title || '');
-        setBio(i.bio || '');
-        setPublished(i.published !== false);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, [id, isNew]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert('已儲存（示範，實際需串接 API）');
-    router.push('/admin/instructors');
-  };
-
+  const { id } = useParams(); const router = useRouter(); const isNew = id === 'new';
+  const [instructor, setInstructor] = useState(emptyInstructor); const [courses, setCourses] = useState([]); const [error, setError] = useState(''); const [notice, setNotice] = useState(''); const [loading, setLoading] = useState(true);
+  useEffect(() => { Promise.all([isNew ? Promise.resolve({}) : request({ action: 'get', id: Number(id) }), fetch('/api/admin/courses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ action: 'list' }) }).then(async (response) => { const data = await response.json(); if (!response.ok) throw new Error(data.error); return data; })]).then(([current, courseData]) => { if (!isNew) setInstructor(current.instructor); setCourses(courseData.courses || []); }).catch((requestError) => setError(requestError.message)).finally(() => setLoading(false)); }, [id, isNew]);
+  const setField = (field, value) => setInstructor((current) => ({ ...current, [field]: value }));
+  const toggleCourse = (courseId) => setField('courseIds', instructor.courseIds.includes(courseId) ? instructor.courseIds.filter((item) => item !== courseId) : [...instructor.courseIds, courseId]);
   if (loading) return <p>載入中…</p>;
-
-  return (
-    <>
-      <h1 className="admin-page-title">{isNew ? '新增師資' : '編輯師資'}</h1>
-      <div className="admin-card">
-        <form onSubmit={handleSubmit} className="admin-form">
-          <div className="form-row">
-            <label>姓名</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-          <div className="form-row">
-            <label>職稱</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label>簡介</label>
-            <textarea value={bio} onChange={(e) => setBio(e.target.value)} />
-          </div>
-          <div className="form-row">
-            <label><input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} /> 上架</label>
-          </div>
-          <div className="admin-actions">
-            <button type="submit" className="admin-btn admin-btn--primary">儲存</button>
-            <Link href="/admin/instructors" className="admin-btn admin-btn--secondary">取消</Link>
-          </div>
-        </form>
-        <p style={{ marginTop: '12px', fontSize: '0.9rem', color: '#666' }}>頭像上傳、授課課程綁定需串接 API。</p>
-      </div>
-    </>
-  );
+  return <><h1 className="admin-page-title">{isNew ? '新增師資' : '編輯師資'}</h1><div className="admin-card"><form className="admin-form" onSubmit={async (event) => { event.preventDefault(); setError(''); try { const result = await request({ action: 'save', id: isNew ? null : Number(id), instructor }); setNotice('師資資料已儲存。'); if (isNew) router.replace(`/admin/instructors/${result.id}/edit`); } catch (requestError) { setError(requestError.message); } }}><div className="form-row"><label>姓名</label><input value={instructor.name} onChange={(event) => setField('name', event.target.value)} required /></div><div className="form-row"><label>職稱</label><input value={instructor.title || ''} onChange={(event) => setField('title', event.target.value)} /></div><div className="form-row"><label>簡介</label><textarea value={instructor.bio || ''} onChange={(event) => setField('bio', event.target.value)} /></div><div className="form-row"><label>師資照片</label><input type="file" accept="image/jpeg,image/png,image/webp" onChange={async (event) => { const file = event.target.files?.[0]; if (!file) return; try { setNotice('圖片上傳中…'); setField('avatarUrl', await upload(file)); setNotice('圖片已上傳，儲存師資後會套用。'); } catch (uploadError) { setError(uploadError.message); } }} />{instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="師資預覽" style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', marginTop: 8 }} /> : null}</div><div className="form-row"><label>排序</label><input type="number" min="0" value={instructor.sortOrder} onChange={(event) => setField('sortOrder', event.target.value)} /></div><div className="form-row"><label><input type="checkbox" checked={instructor.published} onChange={(event) => setField('published', event.target.checked)} /> 上架</label></div><div className="form-row"><label>授課課程</label>{courses.map((course) => <label key={course.id} style={{ display: 'block', marginTop: 6 }}><input type="checkbox" checked={instructor.courseIds.includes(course.id)} onChange={() => toggleCourse(course.id)} /> {course.title}</label>)}</div>{error ? <p className="admin-error">{error}</p> : null}{notice ? <p className="admin-notice">{notice}</p> : null}<div className="admin-actions"><button className="admin-btn admin-btn--primary">儲存</button><Link href="/admin/instructors" className="admin-btn admin-btn--secondary">取消</Link></div></form></div></>;
 }

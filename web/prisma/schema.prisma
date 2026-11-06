@@ -51,6 +51,7 @@ model Course {
   published     Boolean  @default(true)
   sortOrder     Int      @default(0) @map("sort_order")
   hasTrial      Boolean  @default(false) @map("has_trial")
+  imageUrl      String?  @map("image_url")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
   chapters      CourseChapter[]
@@ -118,6 +119,7 @@ model Article {
   excerpt   String?  @db.Text
   content   String?  @db.LongText
   category  String?
+  imageUrl  String?  @map("image_url")
   date      DateTime @db.Date
   published Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
@@ -157,4 +159,12 @@ model Testimonial {
   courseId      Int?     @map("course_id")
   showOnHome    Boolean  @default(false) @map("show_on_home")
   sortOrder     Int      @default(0) @map("sort_order")
+}
+
+model SiteContent {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  data      Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }

@@ -16,6 +16,7 @@
     "db:seed": "node prisma/seed.js",
     "db:seed:test-course": "node prisma/seed-test-course.js",
     "db:seed:official-quiz": "node prisma/seed-official-quiz.js",
+    "db:seed:public-content": "node prisma/seed-public-content.js",
     "db:seed:admin": "node prisma/seed-admin.js",
     "db:studio": "prisma studio"
   },

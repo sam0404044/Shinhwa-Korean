@@ -63,6 +63,7 @@ function validateCourse(input) {
     course: {
       title,
       description: String(input.description || '').trim() || null,
+      imageUrl: String(input.imageUrl || '').trim() || null,
       price,
       priceOriginal,
       category: input.category,
