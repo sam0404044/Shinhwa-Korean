@@ -16,7 +16,7 @@ const emptyCourse = () => ({
   title: '', description: '', price: '', priceOriginal: '', category: 'pronunciation',
   sortOrder: 0, published: false, hasTrial: false, imageUrl: '', chapters: [],
 });
-const newKey = () => crypto.randomUUID();
+const newKey = () => globalThis.crypto?.randomUUID?.() || `new-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const emptyQuestion = () => ({ key: newKey(), prompt: '', options: ['', '', '', ''], correctIndex: 0, explanation: '' });
 const emptyChapter = () => ({ key: newKey(), title: '', description: '', durationMinutes: '', muxPlaybackId: '', questions: [] });
 
@@ -67,7 +67,10 @@ export default function AdminCourseEditor({ routeId }) {
   useEffect(() => {
     const rawId = routeId && routeId !== 'new' ? routeId : new URLSearchParams(window.location.search).get('id');
     if (!rawId) {
-      setLoading(false);
+      courseRequest({ action: 'next-sort-order' })
+        .then((result) => setCourse({ ...emptyCourse(), sortOrder: result.sortOrder }))
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
       return;
     }
     const id = Number(rawId);
@@ -147,11 +150,12 @@ export default function AdminCourseEditor({ routeId }) {
             <div className="form-row"><label htmlFor="course-price">售價（NT$）</label><input id="course-price" type="number" min="0" value={course.price} onChange={(event) => setField('price', event.target.value)} required /></div>
             <div className="form-row"><label htmlFor="course-original">原價（NT$）</label><input id="course-original" type="number" min="0" value={course.priceOriginal} onChange={(event) => setField('priceOriginal', event.target.value)} /></div>
             <div className="form-row"><label htmlFor="course-order">排序</label><input id="course-order" type="number" min="0" value={course.sortOrder} onChange={(event) => setField('sortOrder', event.target.value)} /></div>
-            <div className="form-row admin-editor-toggles">
-              <label><input type="checkbox" checked={course.published} onChange={(event) => setField('published', event.target.checked)} /> 上架</label>
-              <label><input type="checkbox" checked={course.hasTrial} onChange={(event) => setField('hasTrial', event.target.checked)} /> 提供試聽</label>
-            </div>
           </div>
+          <fieldset className="admin-editor-toggles" aria-label="課程上架設定">
+            <legend>上架設定</legend>
+            <label><input type="checkbox" checked={course.published} onChange={(event) => setField('published', event.target.checked)} /> 上架</label>
+            <label><input type="checkbox" checked={course.hasTrial} onChange={(event) => setField('hasTrial', event.target.checked)} /> 提供試聽</label>
+          </fieldset>
           <div className="form-row">
             <label htmlFor="course-image">課程圖片</label>
             <input id="course-image" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
@@ -163,7 +167,7 @@ export default function AdminCourseEditor({ routeId }) {
         <section className="admin-card">
           <div className="admin-card__header">
             <h2 className="admin-section-title">章節與題目</h2>
-            <button type="button" className="admin-btn admin-btn--secondary" onClick={() => setField('chapters', [...course.chapters, emptyChapter()])}>新增章節</button>
+            <button type="button" className="admin-btn admin-btn--secondary" onClick={() => setCourse((current) => ({ ...current, chapters: [...(current.chapters || []), emptyChapter()] }))}>新增章節</button>
           </div>
           {course.chapters.length ? course.chapters.map((chapter, chapterIndex) => (
             <details key={chapter.key} className="admin-chapter" open={chapterIndex === 0 ? true : undefined}>
@@ -176,7 +180,7 @@ export default function AdminCourseEditor({ routeId }) {
                 </div>
                 <div className="form-row"><label htmlFor={`chapter-description-${chapter.key}`}>章節介紹</label><textarea id={`chapter-description-${chapter.key}`} value={chapter.description || ''} onChange={(event) => updateChapter(chapterIndex, 'description', event.target.value)} /></div>
                 <div className="admin-actions">
-                  <button type="button" className="admin-btn admin-btn--secondary" onClick={() => updateChapter(chapterIndex, 'questions', [...chapter.questions, emptyQuestion()])}>新增題目</button>
+                  <button type="button" className="admin-btn admin-btn--secondary" onClick={() => updateChapter(chapterIndex, 'questions', [...(chapter.questions || []), emptyQuestion()])}>新增題目</button>
                   <button type="button" className="admin-btn admin-btn--danger" onClick={() => setField('chapters', course.chapters.filter((_, index) => index !== chapterIndex))}>刪除章節</button>
                 </div>
                 {chapter.questions.map((question, questionIndex) => (

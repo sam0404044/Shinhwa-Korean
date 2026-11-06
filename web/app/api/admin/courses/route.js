@@ -127,6 +127,10 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
+    if (body.action === 'next-sort-order') {
+      const highest = await prisma.course.aggregate({ _max: { sortOrder: true } });
+      return json({ sortOrder: (highest._max.sortOrder ?? 0) + 1 });
+    }
     if (body.action === 'list') {
       const [courses, buyerCounts] = await Promise.all([
         prisma.course.findMany({

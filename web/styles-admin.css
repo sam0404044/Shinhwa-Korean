@@ -118,6 +118,7 @@ body:has(.admin-login-wrap) {
 .admin-form input[type="text"],
 .admin-form input[type="number"],
 .admin-form input[type="email"],
+.admin-form input[type="password"],
 .admin-form input[type="url"],
 .admin-form textarea,
 .admin-form select {
@@ -230,7 +231,8 @@ body:has(.admin-login-wrap) {
 .admin-course-editor .form-row input[type="number"],
 .admin-course-editor .form-row textarea,
 .admin-course-editor .form-row select { max-width: none; width: 100%; }
-.admin-editor-toggles { display: flex; align-items: center; gap: 20px; }
+.admin-editor-toggles { display: flex; align-items: center; gap: 20px; margin: 4px 0 20px; padding: 12px 14px; border: 1px solid #e0e4e8; border-radius: 6px; }
+.admin-editor-toggles legend { padding: 0 6px; color: #495057; font-size: 0.84rem; font-weight: 600; }
 .admin-editor-toggles label { margin: 0; }
 .admin-chapter { border-top: 1px solid #e0e4e8; }
 .admin-chapter:last-of-type { border-bottom: 1px solid #e0e4e8; }
