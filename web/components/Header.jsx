@@ -30,6 +30,18 @@ export default function Header() {
     setMobileOpen(false);
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ action: 'logout' }),
+    });
+    setMember(null);
+    closeMobilePanels();
+    window.location.assign('/');
+  };
+
   const handleNavClick = (event) => {
     if (event.target.closest('a')) {
       closeMobilePanels();
@@ -108,43 +120,13 @@ export default function Header() {
             <span>{member ? '會員中心' : '會員登入'}</span>
           </Link>
 
-          {!member ? (
-            <ul className="nav-list nav-before-login">
-              <li><Link href="/about">關於我們</Link></li>
-              <li><Link href="/courses">課程列表</Link></li>
-              <li><Link href="/news">最新消息</Link></li>
-              <li><Link href="/testimonials">學員見證</Link></li>
-              <li><Link href="/contact">點我洽詢</Link></li>
-            </ul>
-          ) : (
-            <ul className="nav-list nav-after-login">
-              <li className="nav-member">
-                <button
-                  type="button"
-                  className="member-name-btn"
-                  aria-expanded={memberOpen}
-                  aria-haspopup="true"
-                  onClick={() => setMemberOpen(!memberOpen)}
-                >
-                  <span className="member-name-text">{member.name || '會員中心'}</span>
-                  <span className="dropdown-arrow">▼</span>
-                </button>
-                <div className={`member-dropdown ${memberOpen ? 'is-open' : ''}`}>
-                  <div className="dropdown-section">
-                    <h4>會員中心</h4>
-                    <Link href="/member">會員資料</Link>
-                    <Link href="/member#my-courses">我的課程</Link>
-                    <Link href="/member#account">帳號設定</Link>
-                    <Link href="/member#orders">購買紀錄</Link>
-                    <Link href="/member#coins">神話幣</Link>
-                    <Link href="/member#scores">測驗成績</Link>
-                  </div>
-                  <Link href="/free-trial" className="dropdown-item">點我試聽</Link>
-                  <Link href="/contact" className="dropdown-item">點我洽詢</Link>
-                </div>
-              </li>
-            </ul>
-          )}
+          <ul className="nav-list nav-before-login">
+            <li><Link href="/about">關於我們</Link></li>
+            <li><Link href="/courses">課程列表</Link></li>
+            <li><Link href="/news">最新消息</Link></li>
+            <li><Link href="/testimonials">學員見證</Link></li>
+            <li><Link href="/contact">點我洽詢</Link></li>
+          </ul>
 
           <div className="nav-actions">
             <div className="search-wrap">
@@ -172,9 +154,32 @@ export default function Header() {
               </svg>
               <span className="cart-link__badge">{cartCount}</span>
             </Link>
-            <Link href={member ? '/member' : '/login'} className="header-login-btn">
-              {member ? '會員中心' : '會員登入'}
-            </Link>
+            {member ? (
+              <div className="nav-member nav-member--header">
+                <button
+                  type="button"
+                  className="member-name-btn"
+                  aria-expanded={memberOpen}
+                  aria-haspopup="true"
+                  onClick={() => setMemberOpen(!memberOpen)}
+                >
+                  <span className="member-name-text">{member.name || '會員'}</span>
+                  <span className="dropdown-arrow">▼</span>
+                </button>
+                <div className={`member-dropdown ${memberOpen ? 'is-open' : ''}`}>
+                  <div className="dropdown-section">
+                    <h4>會員中心</h4>
+                    <Link href="/member">會員資料</Link>
+                    <Link href="/member#my-courses">我的課程</Link>
+                    <Link href="/member#account">帳號設定</Link>
+                    <Link href="/member#orders">購買紀錄</Link>
+                    <Link href="/member#coins">神話幣</Link>
+                    <Link href="/member#scores">測驗成績</Link>
+                  </div>
+                  <button type="button" className="dropdown-item logout" onClick={handleLogout}>會員登出</button>
+                </div>
+              </div>
+            ) : <Link href="/login" className="header-login-btn">會員登入</Link>}
           </div>
 
         </nav>

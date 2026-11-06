@@ -258,15 +258,19 @@ ul {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
-  background: var(--color-bg);
-  border: 1px solid #ddd;
-  border-radius: var(--radius);
+  min-height: 44px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(124, 104, 182, 0.22);
+  border-radius: 8px;
+  color: var(--color-text);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 .member-name-btn:hover {
-  background: #eee;
+  background: #ffffff;
 }
 
 .dropdown-arrow {
@@ -280,14 +284,14 @@ ul {
 .member-dropdown {
   display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 8px;
-  min-width: 280px;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 208px;
   background: var(--color-white);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  padding: 12px 0;
+  border: 1px solid rgba(39, 29, 69, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(45, 31, 82, 0.16);
+  padding: 8px 0;
   z-index: 100;
 }
 .member-dropdown.is-open {
@@ -295,14 +299,20 @@ ul {
 }
 
 .dropdown-section h4 {
-  margin: 0 16px 8px;
+  margin: 4px 16px 8px;
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
 .dropdown-section a,
 .dropdown-item {
   display: block;
-  padding: 10px 16px;
+  width: 100%;
+  padding: 9px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
   font-size: 0.95rem;
 }
 .dropdown-section a:hover,
