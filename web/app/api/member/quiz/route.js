@@ -140,18 +140,26 @@ export async function POST(request) {
     }
 
     if (body.action === 'history') {
-      const attempts = await prisma.quizAttempt.findMany({
-        where: { userId: member.id, submittedAt: { not: null } },
-        select: {
-          id: true,
-          score: true,
-          submittedAt: true,
-          chapter: { select: { title: true, course: { select: { title: true } } } },
-        },
-        orderBy: { submittedAt: 'desc' },
-        take: 10,
-      });
-      return json({ attempts: attempts.map((attempt) => ({
+      const pageSize = 5;
+      const requestedPage = Number(body.page);
+      const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+      const where = { userId: member.id, submittedAt: { not: null } };
+      const [total, attempts] = await Promise.all([
+        prisma.quizAttempt.count({ where }),
+        prisma.quizAttempt.findMany({
+          where,
+          select: {
+            id: true,
+            score: true,
+            submittedAt: true,
+            chapter: { select: { title: true, course: { select: { title: true } } } },
+          },
+          orderBy: { submittedAt: 'desc' },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+      ]);
+      return json({ total, page, pageSize, attempts: attempts.map((attempt) => ({
         id: attempt.id,
         score: attempt.score,
         submittedAt: attempt.submittedAt,

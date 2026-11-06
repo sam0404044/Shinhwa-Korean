@@ -22,6 +22,8 @@ async function quizRequest(action, fields = {}) {
 export default function MemberQuizPage() {
   const [courses, setCourses] = useState([]);
   const [history, setHistory] = useState([]);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyTotal, setHistoryTotal] = useState(0);
   const [attempt, setAttempt] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(null);
@@ -37,6 +39,8 @@ export default function MemberQuizPage() {
         if (!active) return;
         setCourses(catalog.courses);
         setHistory(records.attempts);
+        setHistoryPage(records.page);
+        setHistoryTotal(records.total);
       })
       .catch((err) => {
         if (!active) return;
@@ -46,6 +50,13 @@ export default function MemberQuizPage() {
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
+
+  async function loadHistory(page = 1) {
+    const records = await quizRequest('history', { page });
+    setHistory(records.attempts);
+    setHistoryPage(records.page);
+    setHistoryTotal(records.total);
+  }
 
   async function start(chapterId) {
     setBusy(true);
@@ -76,8 +87,7 @@ export default function MemberQuizPage() {
     try {
       const graded = await quizRequest('submit', { attemptId: attempt.attemptId, answers });
       setResult(graded);
-      const records = await quizRequest('history');
-      setHistory(records.attempts);
+      await loadHistory(1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       if (err.status === 401) setLoginRequired(true);
@@ -88,6 +98,7 @@ export default function MemberQuizPage() {
   }
 
   const answered = answers.filter((answer) => answer !== null).length;
+  const historyPageCount = Math.ceil(historyTotal / 5);
 
   return (
     <main className="page-main">
@@ -168,7 +179,10 @@ export default function MemberQuizPage() {
 
           {!loading && !loginRequired && history.length > 0 && (
             <section className="member-quiz__history">
-              <h2>最近成績</h2>
+              <div className="member-quiz__history-heading">
+                <div><h2>近期成績</h2><p>共 {historyTotal} 筆已交卷紀錄</p></div>
+                {historyPageCount > 1 ? <label className="member-quiz__history-pages">查看頁次<select value={historyPage} onChange={(event) => loadHistory(Number(event.target.value))}>{Array.from({ length: historyPageCount }, (_, index) => <option key={index + 1} value={index + 1}>第 {index + 1} 頁</option>)}</select></label> : null}
+              </div>
               <ul>
                 {history.map((item) => (
                   <li key={item.id}>

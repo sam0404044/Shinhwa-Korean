@@ -257,11 +257,11 @@ ul {
 .member-name-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(124, 104, 182, 0.22);
+  gap: 9px;
+  min-height: 56px;
+  padding: 4px 10px 4px 4px;
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid transparent;
   border-radius: 8px;
   color: var(--color-text);
   cursor: pointer;
@@ -269,39 +269,59 @@ ul {
   font-weight: 700;
   white-space: nowrap;
 }
+.member-name-link {
+  text-decoration: none;
+}
 .member-name-btn:hover {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(124, 104, 182, 0.18);
 }
-
-.dropdown-arrow {
-  font-size: 0.7rem;
-  transition: transform 0.2s;
+.member-name-avatar {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #f1ebed;
 }
-.member-name-btn[aria-expanded="true"] .dropdown-arrow {
-  transform: rotate(180deg);
-}
+.member-name-avatar img { width: 34px; height: 34px; object-fit: contain; }
+.member-name-info { display: grid; min-width: 0; gap: 2px; text-align: left; }
+.member-name-info strong { overflow: hidden; max-width: 112px; color: var(--color-text); font-size: 0.92rem; text-overflow: ellipsis; }
+.member-name-info small { color: var(--color-text-muted); font-size: 0.76rem; font-weight: 500; }
+.member-name-chevron { margin-left: 2px; color: var(--color-text-muted); font-size: 1.2rem; line-height: 1; transform: translateY(-2px); }
+.nav-member:hover .member-name-chevron,
+.nav-member:focus-within .member-name-chevron { color: var(--color-primary); }
 
 .member-dropdown {
-  display: none;
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 4px);
   right: 0;
-  min-width: 208px;
+  min-width: 220px;
   background: var(--color-white);
   border: 1px solid rgba(39, 29, 69, 0.1);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(45, 31, 82, 0.16);
-  padding: 8px 0;
+  padding: 14px 0 10px;
   z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
-.member-dropdown.is-open {
-  display: block;
+.nav-member:hover .member-dropdown,
+.nav-member:focus-within .member-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .dropdown-section h4 {
-  margin: 4px 16px 8px;
+  margin: 0 16px 10px;
+  text-align: center;
   font-size: 0.9rem;
-  color: var(--color-text-muted);
+  color: var(--color-primary-dark);
 }
 .dropdown-section a,
 .dropdown-item {
@@ -311,7 +331,7 @@ ul {
   border: 0;
   background: transparent;
   color: var(--color-text);
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   font-size: 0.95rem;
 }
@@ -327,8 +347,8 @@ ul {
 }
 .dropdown-item.logout {
   border-top: 1px solid #eee;
-  margin-top: 8px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 14px;
   color: var(--color-accent);
 }
 
@@ -2767,11 +2787,17 @@ body:has(.member-quiz) .float-cta-stack { display: none; }
 .member-quiz__review .is-correct { color: #226a48; }
 .member-quiz__review .is-incorrect { color: #b43f45; }
 .member-quiz__history { margin-top: 42px; }
+.member-quiz__history-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+.member-quiz__history-heading h2 { margin-bottom: 4px; }
+.member-quiz__history-heading p { margin: 0; color: var(--color-text-muted); font-size: 0.9rem; }
+.member-quiz__history-pages { display: flex; align-items: center; gap: 8px; color: var(--color-text-muted); font-size: 0.88rem; white-space: nowrap; }
+.member-quiz__history-pages select { min-height: 36px; padding: 6px 30px 6px 10px; border: 1px solid #d7cfeb; border-radius: 6px; background: #fff; color: var(--color-text); }
 .member-quiz__history li span { flex: 1; }
 .member-quiz__history time { color: var(--color-text-muted); font-size: 0.85rem; }
 @media (max-width: 600px) {
   .member-quiz__chapters li,
   .member-quiz__history li { align-items: flex-start; flex-wrap: wrap; }
+  .member-quiz__history-heading { align-items: flex-start; flex-direction: column; }
   .member-quiz__chapters .btn { width: 100%; text-align: center; }
 }
 .table-wrap {

@@ -9,7 +9,6 @@ import { assetPath } from '../lib/paths';
 export default function Header() {
   const pathname = usePathname();
   const cartCount = useCartCount();
-  const [memberOpen, setMemberOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [member, setMember] = useState(null);
@@ -17,7 +16,6 @@ export default function Header() {
   const closeMobilePanels = () => {
     setMobileOpen(false);
     setMobileSearchOpen(false);
-    setMemberOpen(false);
   };
 
   const toggleMobileMenu = () => {
@@ -156,17 +154,12 @@ export default function Header() {
             </Link>
             {member ? (
               <div className="nav-member nav-member--header">
-                <button
-                  type="button"
-                  className="member-name-btn"
-                  aria-expanded={memberOpen}
-                  aria-haspopup="true"
-                  onClick={() => setMemberOpen(!memberOpen)}
-                >
-                  <span className="member-name-text">{member.name || '會員'}</span>
-                  <span className="dropdown-arrow">▼</span>
-                </button>
-                <div className={`member-dropdown ${memberOpen ? 'is-open' : ''}`}>
+                <Link href="/member" className="member-name-btn member-name-link">
+                  <span className="member-name-avatar"><img src={assetPath('/assets/images/LOGO/favicon-shinhwa.png')} alt="" /></span>
+                  <span className="member-name-info"><strong>{member.name || '會員'}</strong><small>會員中心</small></span>
+                  <span className="member-name-chevron" aria-hidden="true">⌄</span>
+                </Link>
+                <div className="member-dropdown">
                   <div className="dropdown-section">
                     <h4>會員中心</h4>
                     <Link href="/member">會員資料</Link>
