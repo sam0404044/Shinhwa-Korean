@@ -1,6 +1,5 @@
 import { randomBytes } from 'node:crypto';
 import { NextResponse } from 'next/server';
-import { getCourseById } from '../../../../data/courses';
 import { getMember } from '../../../../lib/member-session';
 import { prisma } from '../../../../lib/prisma';
 
@@ -8,24 +7,6 @@ function json(body, status = 200) {
   return NextResponse.json(body, {
     status,
     headers: { 'Cache-Control': 'no-store' },
-  });
-}
-
-async function courseRecord(course) {
-  const existing = await prisma.course.findFirst({ where: { title: course.title } });
-  if (existing) return existing;
-
-  return prisma.course.create({
-    data: {
-      title: course.title,
-      description: course.description || null,
-      price: course.price,
-      priceOriginal: course.priceOriginal ?? null,
-      category: course.category,
-      published: true,
-      sortOrder: course.sortOrder ?? 0,
-      hasTrial: Boolean(course.hasTrial),
-    },
   });
 }
 
@@ -40,15 +21,26 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const courseIds = Array.from(new Set((Array.isArray(body.courseIds) ? body.courseIds : [])
-      .map((id) => String(id))));
-    const courses = courseIds.map((id) => getCourseById(id)).filter(Boolean);
+      .map((id) => Number(id)).filter((id) => Number.isSafeInteger(id) && id > 0)));
+    const courses = await prisma.course.findMany({
+      where: { id: { in: courseIds }, published: true },
+      select: { id: true, price: true },
+    });
     if (!courses.length) return json({ error: '請先選擇課程。' }, 400);
+    if (courses.length !== courseIds.length) return json({ error: '選擇的課程已下架或不存在。' }, 400);
+
+    // Actual providers require a merchant account and verified callback before payment can be marked paid.
+    if (process.env.PAYMENT_PROVIDER !== 'mock' || process.env.ALLOW_MOCK_PAYMENTS !== 'true') {
+      return json({
+        error: '線上付款尚未啟用。請等待金流商店帳號與 HTTPS 網域設定完成。',
+        code: 'PAYMENT_NOT_CONFIGURED',
+      }, 503);
+    }
 
     const orders = [];
     for (const course of courses) {
-      const record = await courseRecord(course);
       const existingOrder = await prisma.order.findFirst({
-        where: { userId: member.id, courseId: record.id, status: 'paid' },
+        where: { userId: member.id, courseId: course.id, status: 'paid' },
       });
       if (existingOrder) {
         orders.push(existingOrder);
@@ -59,7 +51,7 @@ export async function POST(request) {
         data: {
           orderNo: `ORD${Date.now()}${randomBytes(3).toString('hex')}`,
           userId: member.id,
-          courseId: record.id,
+          courseId: course.id,
           amount: course.price,
           status: 'paid',
           paidAt: new Date(),

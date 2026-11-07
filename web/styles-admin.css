@@ -245,6 +245,7 @@ body:has(.admin-login-wrap) {
 .admin-question__header h3 { margin: 0; font-size: 1rem; }
 .admin-editor-save { margin: 0 0 30px; }
 .admin-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.admin-help-text { display: block; margin-top: 6px; color: #667085; font-size: 0.82rem; line-height: 1.45; }
 .admin-dashboard { max-width: 1400px; }
 .admin-dashboard__eyebrow { margin: 0 0 4px; color: #775bd1; font-size: 0.78rem; font-weight: 700; }
 .admin-dashboard__source { margin: 4px 0 0; color: #6b7280; font-size: 0.82rem; }

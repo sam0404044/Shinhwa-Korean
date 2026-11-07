@@ -11,7 +11,7 @@ export default function CheckoutPage() {
       <section className="section">
         <div className="container container--narrow">
           <h1 className="page-title">結帳</h1>
-          <p className="checkout-hint">確認送出後即完成購買，課程權限會立即開通。</p>
+          <p className="checkout-hint">完成付款後才會開通課程權限。</p>
           <Suspense fallback={<p className="checkout-hint">載入結帳內容…</p>}>
             <CheckoutForm />
           </Suspense>

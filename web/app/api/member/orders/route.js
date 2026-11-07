@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     const orders = await prisma.order.findMany({
       where: { userId: member.id, status: 'paid' },
-      include: { course: { select: { title: true } } },
+      include: { course: { select: { id: true, title: true } } },
       orderBy: { paidAt: 'desc' },
     });
 
@@ -19,6 +19,7 @@ export async function POST(request) {
       orders: orders.map((order) => ({
         id: order.id,
         orderNo: order.orderNo,
+        courseId: order.course.id,
         amount: order.amount,
         status: order.status,
         paidAt: order.paidAt,

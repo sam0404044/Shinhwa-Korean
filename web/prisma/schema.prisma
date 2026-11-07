@@ -67,6 +67,8 @@ model CourseChapter {
   description    String? @db.Text
   durationMinutes Int?   @map("duration_minutes")
   muxPlaybackId  String? @map("mux_playback_id")
+  muxUploadId    String? @map("mux_upload_id")
+  muxAssetId     String? @map("mux_asset_id")
   sortOrder      Int     @default(0) @map("sort_order")
   course         Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions      QuizQuestion[]

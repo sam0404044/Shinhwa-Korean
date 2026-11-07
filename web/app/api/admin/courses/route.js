@@ -54,6 +54,8 @@ function validateCourse(input) {
       description: String(chapter.description || '').trim() || null,
       durationMinutes,
       muxPlaybackId: String(chapter.muxPlaybackId || '').trim() || null,
+      muxUploadId: String(chapter.muxUploadId || '').trim() || null,
+      muxAssetId: String(chapter.muxAssetId || '').trim() || null,
       sortOrder: chapterIndex + 1,
       questions,
     };

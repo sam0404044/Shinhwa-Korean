@@ -18,7 +18,7 @@ const emptyCourse = () => ({
 });
 const newKey = () => globalThis.crypto?.randomUUID?.() || `new-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const emptyQuestion = () => ({ key: newKey(), prompt: '', options: ['', '', '', ''], correctIndex: 0, explanation: '' });
-const emptyChapter = () => ({ key: newKey(), title: '', description: '', durationMinutes: '', muxPlaybackId: '', questions: [] });
+const emptyChapter = () => ({ key: newKey(), title: '', description: '', durationMinutes: '', muxPlaybackId: '', muxUploadId: '', muxAssetId: '', questions: [] });
 
 function prepareCourse(course) {
   return {
@@ -132,6 +132,35 @@ export default function AdminCourseEditor({ routeId }) {
     }
   }
 
+  async function uploadMuxVideo(chapterIndex, file) {
+    const chapter = course.chapters[chapterIndex];
+    if (!chapter?.id) {
+      setError('請先儲存課程與章節，再上傳 Mux 影片。');
+      return;
+    }
+    setError('');
+    setNotice('正在建立 Mux 上傳連結…');
+    try {
+      const response = await fetch('/api/admin/mux', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create-upload', chapterId: chapter.id }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || '無法建立 Mux 上傳連結。');
+      setNotice('影片上傳至 Mux 中…');
+      const upload = await fetch(result.uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type || 'video/mp4' }, body: file });
+      if (!upload.ok) throw new Error('影片傳送到 Mux 失敗。');
+      updateChapter(chapterIndex, 'muxUploadId', result.uploadId);
+      updateChapter(chapterIndex, 'muxAssetId', '');
+      updateChapter(chapterIndex, 'muxPlaybackId', '');
+      setNotice('影片已送往 Mux 處理。完成後 Webhook 會自動寫入 Playback ID。');
+    } catch (err) {
+      setError(err.message);
+      setNotice('');
+    }
+  }
+
   if (loading) return <p>載入中…</p>;
   if (error && courseId && !course.title) return <p className="admin-error" role="alert">{error}</p>;
 
@@ -176,8 +205,9 @@ export default function AdminCourseEditor({ routeId }) {
                 <div className="admin-editor-grid">
                   <div className="form-row"><label htmlFor={`chapter-title-${chapter.key}`}>章節名稱</label><input id={`chapter-title-${chapter.key}`} type="text" value={chapter.title} onChange={(event) => updateChapter(chapterIndex, 'title', event.target.value)} required /></div>
                   <div className="form-row"><label htmlFor={`chapter-duration-${chapter.key}`}>時間（分鐘）</label><input id={`chapter-duration-${chapter.key}`} type="number" min="0" value={chapter.durationMinutes} onChange={(event) => updateChapter(chapterIndex, 'durationMinutes', event.target.value)} /></div>
-                  <div className="form-row"><label htmlFor={`chapter-mux-${chapter.key}`}>Mux Playback ID</label><input id={`chapter-mux-${chapter.key}`} type="text" value={chapter.muxPlaybackId || ''} onChange={(event) => updateChapter(chapterIndex, 'muxPlaybackId', event.target.value)} /></div>
+                  <div className="form-row"><label htmlFor={`chapter-mux-${chapter.key}`}>Mux Playback ID</label><input id={`chapter-mux-${chapter.key}`} type="text" value={chapter.muxPlaybackId || ''} onChange={(event) => updateChapter(chapterIndex, 'muxPlaybackId', event.target.value)} /><small className="admin-help-text">{chapter.muxPlaybackId ? '影片已可播放。' : chapter.muxUploadId ? 'Mux 正在處理影片。' : '可手動貼上，或使用下方直傳。'}</small></div>
                 </div>
+                <div className="form-row"><label htmlFor={`chapter-mux-upload-${chapter.key}`}>上傳影片到 Mux</label><input id={`chapter-mux-upload-${chapter.key}`} type="file" accept="video/mp4,video/webm,video/quicktime" disabled={!chapter.id} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadMuxVideo(chapterIndex, file); }} /><small className="admin-help-text">{chapter.id ? '需先在伺服器設定 Mux API Token；上傳完成後會自動回填 Playback ID。' : '請先儲存此章節，才可建立 Mux 上傳連結。'}</small></div>
                 <div className="form-row"><label htmlFor={`chapter-description-${chapter.key}`}>章節介紹</label><textarea id={`chapter-description-${chapter.key}`} value={chapter.description || ''} onChange={(event) => updateChapter(chapterIndex, 'description', event.target.value)} /></div>
                 <div className="admin-actions">
                   <button type="button" className="admin-btn admin-btn--secondary" onClick={() => updateChapter(chapterIndex, 'questions', [...(chapter.questions || []), emptyQuestion()])}>新增題目</button>

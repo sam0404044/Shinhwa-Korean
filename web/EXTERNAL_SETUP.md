@@ -26,8 +26,9 @@
 
 1. 建立 Mux 組織與 Project，開通計費。
 2. 建立權限最小化的 API Token，取得 `MUX_TOKEN_ID` 與 `MUX_TOKEN_SECRET`。
-3. 填入伺服器 `.env` 後重新部署。課程章節目前已保留 `Mux Playback ID` 欄位；在完整直傳流程啟用前，可先於 Mux 上傳影片後把 Playback ID 貼入後台。
-4. 若需限制只有已購課會員可看，另建立 Mux Signing Key，播放端使用 signed playback token。
+3. 填入伺服器 `.env` 的 `MUX_TOKEN_ID`、`MUX_TOKEN_SECRET`、`MUX_WEBHOOK_SECRET` 後重新部署。後台已提供影片直傳按鈕，Mux 完成轉檔後會透過 Webhook 自動把 Playback ID 寫回章節資料。
+4. 在 Mux 後台將 Webhook 指向 `https://你的網域/api/webhooks/mux`，並填入相同的 Webhook Signing Secret。
+5. 若需限制只有已購課會員可看，另建立 Mux Signing Key，播放端使用 signed playback token。
 
 ## 5. 圖片與備份
 

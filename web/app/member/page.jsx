@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { courses, getCourseById } from '../../data/courses';
-import { clearPurchases, readPurchases } from '../../lib/purchases';
 
 const PANELS = [
   { id: 'my-courses', label: '我的課程' },
@@ -13,16 +11,14 @@ const PANELS = [
   { id: 'coins', label: '神話幣' },
   { id: 'scores', label: '測驗成績' },
 ];
-const testCourse = getCourseById(1);
-
-function courseByTitle(title) {
-  return courses.find((course) => course.title === title) || null;
-}
-
 export default function MemberPage() {
   const [panel, setPanel] = useState('my-courses');
   const [orders, setOrders] = useState([]);
-  const [localCourses, setLocalCourses] = useState([]);
+  const [memberCourses, setMemberCourses] = useState([]);
+  const [profile, setProfile] = useState({ name: '', email: '' });
+  const [profileMessage, setProfileMessage] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
 
   useEffect(() => {
     const hashPanel = window.location.hash.slice(1);
@@ -34,88 +30,62 @@ export default function MemberPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadPurchases() {
-      const localIds = readPurchases();
-      const response = await fetch('/api/member/orders', { method: 'POST' });
+    async function loadMemberData() {
+      const [ordersResponse, coursesResponse, profileResponse] = await Promise.all([
+        fetch('/api/member/orders', { method: 'POST' }),
+        fetch('/api/member/courses', { method: 'POST' }),
+        fetch('/api/member/profile', { cache: 'no-store' }),
+      ]);
       if (cancelled) return;
-
-      if (response.ok && localIds.length) {
-        const saved = await fetch('/api/member/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ courseIds: localIds }),
-        });
-        if (saved.ok) clearPurchases();
-        const again = await fetch('/api/member/orders', { method: 'POST' });
-        const data = again.ok ? await again.json() : { orders: [] };
-        if (!cancelled) {
-          setOrders(data.orders || []);
-          setLocalCourses([]);
-        }
-        return;
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-        if (!cancelled) {
-          setOrders(data.orders || []);
-          setLocalCourses([]);
-        }
-        return;
-      }
-
-      if (!cancelled) {
-        setOrders([]);
-        setLocalCourses(localIds.map((id) => getCourseById(id)).filter(Boolean));
-      }
+      const ordersData = ordersResponse.ok ? await ordersResponse.json() : { orders: [] };
+      const coursesData = coursesResponse.ok ? await coursesResponse.json() : { courses: [] };
+      const profileData = profileResponse.ok ? await profileResponse.json() : { profile: { name: '', email: '' } };
+      setOrders(ordersData.orders || []);
+      setMemberCourses(coursesData.courses || []);
+      setProfile(profileData.profile || { name: '', email: '' });
     }
 
-    loadPurchases().catch(() => {
-      if (!cancelled) setLocalCourses(readPurchases().map((id) => getCourseById(id)).filter(Boolean));
-    });
+    loadMemberData().catch(() => { if (!cancelled) { setOrders([]); setMemberCourses([]); } });
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const ownedTitles = new Set([
-    ...orders.map((order) => order.courseTitle),
-    ...localCourses.map((course) => course.title),
-  ]);
-  const courseRows = [
-    ...orders.map((order) => {
-      const course = courseByTitle(order.courseTitle);
-      return {
-        key: `order-${order.id}`,
-        label: '已購買',
-        title: order.courseTitle,
-        meta: `NT$ ${order.amount.toLocaleString()}`,
-        href: course ? `/course/${course.id}` : '',
-      };
-    }),
-    ...localCourses.map((course) => ({
-      key: `local-${course.id}`,
-      label: '已購買',
-      title: course.title,
-      meta: `NT$ ${course.price.toLocaleString()}`,
-      href: `/course/${course.id}`,
-    })),
-  ];
-  if (!ownedTitles.has(testCourse.title)) {
-    courseRows.push({
-      key: 'trial',
-      label: '測試課程',
-      title: testCourse.title,
-      meta: `${testCourse.chapters.length} 堂課 · Unit 1 題庫已開放試作`,
-      href: `/course/${testCourse.id}`,
-    });
-  }
+  const courseRows = memberCourses.map((course) => ({
+    key: `course-${course.id}`,
+    label: course.purchased ? '已購買' : '試聽課程',
+    title: course.title,
+    meta: course.purchased ? `NT$ ${Number(course.amount || 0).toLocaleString()}` : `${course.chapterCount} 堂課 · 可試作單元小考`,
+    href: `/course-play?courseId=${course.id}`,
+  }));
 
   const show = (id) => {
     setPanel(id);
     if (typeof window !== 'undefined') window.history.replaceState(null, '', '#' + id);
   };
+
+  async function saveProfile(event) {
+    event.preventDefault();
+    setProfileMessage('');
+    setProfileError('');
+    setProfileSaving(true);
+    try {
+      const response = await fetch('/api/member/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || '無法儲存帳號設定。');
+      setProfile(data.profile);
+      setProfileMessage('帳號設定已儲存。');
+    } catch (error) {
+      setProfileError(error.message);
+    } finally {
+      setProfileSaving(false);
+    }
+  }
 
   return (
     <main className="page-main page-main--member">
@@ -180,11 +150,13 @@ export default function MemberPage() {
                 <h2>帳號設定</h2>
                 <p>更新你的基本資料與登入帳號。</p>
               </header>
-              <form className="auth-form member-account-form">
-                <div className="form-group"><label>姓名</label><input type="text" name="name" /></div>
-                <div className="form-group"><label>電子郵件</label><input type="email" name="email" /></div>
+              <form className="auth-form member-account-form" onSubmit={saveProfile}>
+                <div className="form-group"><label htmlFor="member-name">姓名</label><input id="member-name" type="text" name="name" value={profile.name} onChange={(event) => setProfile((current) => ({ ...current, name: event.target.value }))} /></div>
+                <div className="form-group"><label htmlFor="member-email">電子郵件</label><input id="member-email" type="email" name="email" value={profile.email} onChange={(event) => setProfile((current) => ({ ...current, email: event.target.value }))} required /></div>
+                {profileError ? <p className="auth-form__status auth-form__status--error" role="alert">{profileError}</p> : null}
+                {profileMessage ? <p className="auth-form__status auth-form__status--success" role="status">{profileMessage}</p> : null}
                 <div className="button-actions member-account__actions">
-                  <button type="submit" className="btn btn-primary">儲存</button>
+                  <button type="submit" className="btn btn-primary" disabled={profileSaving}>{profileSaving ? '儲存中…' : '儲存'}</button>
                   <button type="button" className="btn btn-outline" onClick={async () => {
                     const response = await fetch('/api/auth/session', {
                       method: 'POST',
@@ -202,18 +174,12 @@ export default function MemberPage() {
                 <h2>購買紀錄</h2>
                 <p>查看已完成付款的課程與訂單狀態。</p>
               </header>
-              {orders.length || localCourses.length ? (
+              {orders.length ? (
                 <ul className="member-order-list">
                   {orders.map((order) => (
                     <li key={order.id}>
                       <div><strong>{order.courseTitle}</strong><span>課程訂單</span></div>
                       <span className="member-order-list__amount">NT$ {order.amount.toLocaleString()} <em>已付款</em></span>
-                    </li>
-                  ))}
-                  {localCourses.map((course) => (
-                    <li key={course.id}>
-                      <div><strong>{course.title}</strong><span>課程訂單</span></div>
-                      <span className="member-order-list__amount">NT$ {course.price.toLocaleString()} <em>已付款</em></span>
                     </li>
                   ))}
                 </ul>
