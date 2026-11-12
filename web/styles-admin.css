@@ -304,3 +304,40 @@ body:has(.admin-login-wrap) {
   .admin-bar-chart__item { grid-template-rows: 22px 115px auto auto; }
   .admin-bar-chart__amount { font-size: 0.65rem; }
 }
+
+.article-editor {
+  overflow: hidden;
+  border: 1px solid #d9d1e7;
+  border-radius: 8px;
+  background: #fff;
+}
+.article-editor:focus-within { border-color: #7050a8; }
+.article-editor__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid #d9d1e7;
+  background: #f7f3fb;
+}
+.article-editor__tools button {
+  padding: 6px 10px;
+  border: 1px solid #d9d1e7;
+  border-radius: 5px;
+  background: #fff;
+  color: #3e295e;
+  cursor: pointer;
+}
+.article-editor__tools button[aria-pressed="true"] {
+  border-color: #7050a8;
+  background: #ece2f8;
+}
+.article-editor__body {
+  min-height: 240px;
+  padding: 14px 18px;
+  overflow-wrap: anywhere;
+  outline: none;
+}
+.article-editor__body ul { list-style: disc; padding-inline-start: 1.5em; }
+.article-editor__body ol { list-style: decimal; padding-inline-start: 1.5em; }
+.article-editor__body img { max-width: 100%; height: auto; }

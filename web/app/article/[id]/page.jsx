@@ -1,9 +1,29 @@
+import { headers } from 'next/headers';
+import { getArticleThumbnail } from '../../../lib/article-thumbnail';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '../../../lib/prisma';
 
 export const dynamic = 'force-dynamic';
-export async function generateMetadata({ params }) { const article = await prisma.article.findFirst({ where: { id: Number(params.id), published: true } }); return { title: article ? `${article.title} - 神話韓語` : '文章 - 神話韓語' }; }
+export async function generateMetadata({ params }) {
+  const article = await prisma.article.findFirst({ where: { id: Number(params.id), published: true } });
+  if (!article) return { title: '文章 - 神話韓語' };
+
+  const requestHeaders = headers();
+  const host = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
+  const protocol = requestHeaders.get('x-forwarded-proto') === 'http' ? 'http' : 'https';
+  const thumbnail = getArticleThumbnail(article);
+  const image = host ? new URL(thumbnail, `${protocol}://${host}`).href : thumbnail;
+  const title = `${article.title} - 神話韓語`;
+  const description = article.excerpt || undefined;
+  return {
+    title,
+    description,
+    openGraph: { type: 'article', title, description, images: [image] },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
+  };
+}
+
 export default async function ArticlePage({ params }) {
   const article = await prisma.article.findFirst({ where: { id: Number(params.id), published: true } });
   if (!article) notFound();

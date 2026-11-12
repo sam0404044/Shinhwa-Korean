@@ -1,3 +1,4 @@
+import sanitizeHtml from 'sanitize-html';
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 import { getAdmin } from '../../../../lib/admin-session';
@@ -22,7 +23,12 @@ function articleInput(input) {
   return {
     title,
     excerpt: String(input.excerpt || '').trim() || null,
-    content: String(input.content || '').trim() || null,
+    content: sanitizeHtml(String(input.content || ''), {
+      allowedTags: [...sanitizeHtml.defaults.allowedTags, 'img', 's', 'u'],
+      allowedAttributes: { a: ['href', 'title'], img: ['src', 'alt', 'title', 'width', 'height'] },
+      allowedSchemesByTag: { img: ['http', 'https'] },
+      allowProtocolRelative: false,
+    }).trim() || null,
     category: String(input.category || '').trim() || null,
     imageUrl: String(input.imageUrl || '').trim() || null,
     date,

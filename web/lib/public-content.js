@@ -1,3 +1,4 @@
+import { getArticleThumbnail } from './article-thumbnail';
 import { prisma } from './prisma';
 
 const courseImages = ['/assets/images/courses/01.webp', '/assets/images/courses/02.webp', '/assets/images/courses/03.webp', '/assets/images/courses/04.webp'];
@@ -31,7 +32,7 @@ export async function getPublishedArticles(limit) {
   });
   return articles.map((article) => ({
     ...article,
-    image: article.imageUrl || '/assets/images/content/01.webp',
+    image: getArticleThumbnail(article),
     date: article.date.toISOString().slice(0, 10),
   }));
 }

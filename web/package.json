@@ -21,11 +21,16 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@tiptap/extension-image": "^3.33.1",
+    "@tiptap/pm": "^3.33.1",
+    "@tiptap/react": "^3.33.1",
+    "@tiptap/starter-kit": "^3.33.1",
+    "bcryptjs": "^2.4.3",
     "next": "^14.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@prisma/client": "^5.22.0",
-    "bcryptjs": "^2.4.3"
+    "sanitize-html": "^2.18.2"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
