@@ -305,14 +305,21 @@ body:has(.admin-login-wrap) {
   .admin-bar-chart__amount { font-size: 0.65rem; }
 }
 
+.admin-main:has(.article-editor) {
+  min-width: 0;
+  overflow: visible;
+}
 .article-editor {
-  overflow: hidden;
   border: 1px solid #d9d1e7;
   border-radius: 8px;
   background: #fff;
 }
 .article-editor:focus-within { border-color: #7050a8; }
 .article-editor__tools {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-radius: 7px 7px 0 0;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
