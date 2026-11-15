@@ -39,6 +39,12 @@ export default function AdminDashboardPage() {
         <MetricCard label="歷史課程銷售" value={`${metrics.totalSales} 筆`} detail={`累計營收 NT$ ${formatNumber(metrics.totalRevenue)}`} tone="blue" ratio={1} />
         <MetricCard label="本月新增會員" value={`${metrics.newMemberCount} 人`} detail={`目前會員共 ${formatNumber(metrics.memberCount)} 人`} tone="pink" ratio={ratio(metrics.newMemberCount, metrics.memberCount)} />
         <MetricCard label="可銷售課程" value={`${metrics.publishedCourseCount} 堂`} detail={`其中 ${metrics.trialCourseCount} 堂提供試聽`} tone="teal" ratio={ratio(metrics.trialCourseCount, metrics.publishedCourseCount)} />
+        <MetricCard
+          label="會員觀看總時數"
+          value={formatDuration(metrics.watchedMinutes)}
+          detail="累計會員課程影片實際播放時間"
+          tone="violet"
+        />
       </section>
 
       <section className="admin-dashboard-grid">
@@ -76,10 +82,11 @@ export default function AdminDashboardPage() {
 }
 
 function MetricCard({ label, value, detail, tone, ratio: progress }) {
-  return <section className={`admin-kpi-card admin-kpi-card--${tone}`}><p>{label}</p><strong>{value}</strong><span>{detail}</span><div className="admin-kpi-card__meter"><i style={{ width: `${Math.max(8, progress * 100)}%` }} /></div></section>;
+  return <section className={`admin-kpi-card admin-kpi-card--${tone}`}><p>{label}</p><strong>{value}</strong><span>{detail}</span>{progress != null && <div className="admin-kpi-card__meter"><i style={{ width: `${Math.max(8, progress * 100)}%` }} /></div>}</section>;
 }
 
 function ratio(value, total) { return !total || !value ? 0 : Math.min(value / total, 1); }
 function formatNumber(value) { return new Intl.NumberFormat('zh-TW').format(value || 0); }
+function formatDuration(minutes) { return `${formatNumber(Math.floor(minutes / 60))} 小時 ${minutes % 60} 分`; }
 function formatCompact(value) { return value >= 10000 ? `${Math.round(value / 1000)}k` : formatNumber(value); }
 function formatDate(value) { return value ? new Intl.DateTimeFormat('zh-TW', { month: 'numeric', day: 'numeric' }).format(new Date(value)) : '—'; }

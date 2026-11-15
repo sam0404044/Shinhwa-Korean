@@ -29,6 +29,7 @@ model User {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   orders       Order[]
   quizAttempts QuizAttempt[]
+  videoWatchSessions VideoWatchSession[]
 }
 
 // 後台管理者
@@ -73,6 +74,7 @@ model CourseChapter {
   course         Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions      QuizQuestion[]
   quizAttempts   QuizAttempt[]
+  videoWatchSessions VideoWatchSession[]
 }
 
 model QuizQuestion {
@@ -169,4 +171,17 @@ model SiteContent {
   data      Json
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model VideoWatchSession {
+  userId    Int           @map("user_id")
+  chapterId Int           @map("chapter_id")
+  sessionId String        @map("session_id") @db.Char(32)
+  watchedMs Int           @map("watched_ms")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter   CourseChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@id([userId, chapterId, sessionId])
+  @@index([chapterId])
+  @@map("video_watch_sessions")
 }

@@ -1,3 +1,4 @@
+import CourseVideoPlayer from '../../components/CourseVideoPlayer';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -47,11 +48,11 @@ export default async function CoursePlayPage({ searchParams }) {
       <div className="course-play__player">
         <div className="course-play__video-wrap">
           {selectedChapter?.muxPlaybackId ? (
-            <iframe
+            <CourseVideoPlayer
+              key={selectedChapter.id}
+              chapterId={selectedChapter.id}
               title={`${course.title}：${selectedChapter.title}`}
-              src={`https://player.mux.com/${encodeURIComponent(selectedChapter.muxPlaybackId)}`}
-              allow="accelerometer; autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
+              playbackId={selectedChapter.muxPlaybackId}
             />
           ) : <p className="course-play__placeholder">本章節影片尚未上架。</p>}
         </div>

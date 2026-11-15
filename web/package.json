@@ -21,6 +21,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@mux/mux-player-react": "^3.14.1",
     "@prisma/client": "^5.22.0",
     "@tiptap/extension-image": "^3.33.1",
     "@tiptap/pm": "^3.33.1",
