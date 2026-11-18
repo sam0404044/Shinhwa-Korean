@@ -3,13 +3,7 @@ import { prisma } from './prisma';
 
 const courseImages = ['/assets/images/courses/01.webp', '/assets/images/courses/02.webp', '/assets/images/courses/03.webp', '/assets/images/courses/04.webp'];
 
-export const courseCategories = [
-  { value: 'pronunciation', label: '發音＋基本對話', shortLabel: '發音＋基本對話' },
-  { value: 'beginner', label: '初級', shortLabel: '初級' },
-  { value: 'intermediate', label: '中級', shortLabel: '中級' },
-  { value: 'advanced', label: '高級', shortLabel: '高級' },
-  { value: 'topics', label: '主題課程', shortLabel: '主題課程' },
-];
+export { courseCategories } from './course-categories';
 
 export function presentCourse(course, index = 0) {
   return { ...course, image: course.imageUrl || courseImages[index % courseImages.length] };

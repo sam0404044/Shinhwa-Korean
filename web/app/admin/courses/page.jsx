@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { courseCategories } from '../../../lib/course-categories';
 import { useCallback, useEffect, useState } from 'react';
 
 export default function AdminCoursesPage() {
@@ -80,7 +81,7 @@ export default function AdminCoursesPage() {
                   <td>{course.sortOrder}</td>
                   <td>{course.title}</td>
                   <td>NT$ {course.price.toLocaleString()}</td>
-                  <td>{course.category}</td>
+                  <td>{courseCategories.find((category) => category.value === course.category)?.label || '未分類'}</td>
                   <td>{course.chapterCount}／{course.questionCount}</td>
                   <td>{course.buyerCount} 人</td>
                   <td><span className={`admin-badge admin-badge--${course.published ? 'on' : 'off'}`}>{course.published ? '上架' : '下架'}</span></td>
