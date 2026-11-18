@@ -50,7 +50,7 @@ export async function POST(request) {
       console.error('Mux direct upload failed', response.status, payload);
       return json({ error: 'Mux 無法建立上傳連結。請檢查 API Token 權限。' }, 502);
     }
-    await prisma.courseChapter.update({ where: { id: chapter.id }, data: { muxUploadId: payload.data.id, muxAssetId: null, muxPlaybackId: null } });
+    await prisma.courseChapter.update({ where: { id: chapter.id }, data: { muxUploadId: payload.data.id } });
     return json({ uploadUrl: payload.data.url, uploadId: payload.data.id });
   } catch (error) {
     console.error(error);

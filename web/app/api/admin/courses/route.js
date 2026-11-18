@@ -94,6 +94,12 @@ async function saveCourse(id, input) {
     for (const chapter of chapters) {
       if (chapter.id && !existingChapters.has(chapter.id)) throw new Error('章節不屬於此課程。');
       const { id: chapterId, questions, ...chapterData } = chapter;
+      const previousChapter = existingChapters.get(chapterId);
+      if (previousChapter?.muxUploadId) {
+        chapterData.muxUploadId = previousChapter.muxUploadId;
+        chapterData.muxAssetId = previousChapter.muxAssetId;
+        chapterData.muxPlaybackId = previousChapter.muxPlaybackId;
+      }
       const savedChapter = chapterId
         ? await tx.courseChapter.update({ where: { id: chapterId }, data: chapterData })
         : await tx.courseChapter.create({ data: { ...chapterData, courseId: course.id } });

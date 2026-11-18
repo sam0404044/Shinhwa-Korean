@@ -24,3 +24,5 @@ Thumbs.db
 # Local task notes
 TODO.md
 USER_ACTION_REQUIRED.md
+
+mux-*.env

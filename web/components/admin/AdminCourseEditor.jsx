@@ -54,6 +54,7 @@ export default function AdminCourseEditor({ routeId }) {
   const [courseId, setCourseId] = useState(null);
   const [course, setCourse] = useState(emptyCourse);
   const [loading, setLoading] = useState(true);
+  const [videoUploading, setVideoUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -134,6 +135,7 @@ export default function AdminCourseEditor({ routeId }) {
     }
     setError('');
     setNotice('正在建立 Mux 上傳連結…');
+    setVideoUploading(true);
     try {
       const response = await fetch('/api/admin/mux', {
         method: 'POST',
@@ -146,12 +148,26 @@ export default function AdminCourseEditor({ routeId }) {
       const upload = await fetch(result.uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type || 'video/mp4' }, body: file });
       if (!upload.ok) throw new Error('影片傳送到 Mux 失敗。');
       updateChapter(chapterIndex, 'muxUploadId', result.uploadId);
-      updateChapter(chapterIndex, 'muxAssetId', '');
-      updateChapter(chapterIndex, 'muxPlaybackId', '');
-      setNotice('影片已送往 Mux 處理。完成後 Webhook 會自動寫入 Playback ID。');
+      setNotice('影片已上傳，Mux 轉檔中…');
+      for (let attempt = 0; attempt < 90; attempt += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 2000));
+        const refreshed = await courseRequest({ action: 'get', id: courseId });
+        const ready = refreshed.course.chapters.find((item) => item.id === chapter.id);
+        if (ready?.muxUploadId !== result.uploadId) throw new Error('章節的上傳資料已變更，請重新載入課程。');
+        if (ready.muxAssetId && ready.muxAssetId !== chapter.muxAssetId) {
+          updateChapter(chapterIndex, 'muxAssetId', ready.muxAssetId);
+          updateChapter(chapterIndex, 'muxPlaybackId', ready.muxPlaybackId);
+          updateChapter(chapterIndex, 'durationMinutes', String(ready.durationMinutes ?? ''));
+          setNotice('影片轉檔完成，播放 ID 與片長已自動更新。');
+          return;
+        }
+      }
+      setNotice('影片已上傳，仍在等待 Mux 轉檔完成。稍後重新載入課程可查看結果。');
     } catch (err) {
       setError(err.message);
       setNotice('');
+    } finally {
+      setVideoUploading(false);
     }
   }
 
@@ -201,7 +217,7 @@ export default function AdminCourseEditor({ routeId }) {
                   <div className="form-row"><label htmlFor={`chapter-duration-${chapter.key}`}>時間（分鐘）</label><input id={`chapter-duration-${chapter.key}`} type="number" min="0" value={chapter.durationMinutes} onChange={(event) => updateChapter(chapterIndex, 'durationMinutes', event.target.value)} /></div>
                   <div className="form-row"><label htmlFor={`chapter-mux-${chapter.key}`}>Mux Playback ID</label><input id={`chapter-mux-${chapter.key}`} type="text" value={chapter.muxPlaybackId || ''} onChange={(event) => updateChapter(chapterIndex, 'muxPlaybackId', event.target.value)} /><small className="admin-help-text">{chapter.muxPlaybackId ? '影片已可播放。' : chapter.muxUploadId ? 'Mux 正在處理影片。' : '可手動貼上，或使用下方直傳。'}</small></div>
                 </div>
-                <div className="form-row"><label htmlFor={`chapter-mux-upload-${chapter.key}`}>上傳影片到 Mux</label><input id={`chapter-mux-upload-${chapter.key}`} type="file" accept="video/mp4,video/webm,video/quicktime" disabled={!chapter.id} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadMuxVideo(chapterIndex, file); }} /><small className="admin-help-text">{chapter.id ? '需先在伺服器設定 Mux API Token；上傳完成後會自動回填 Playback ID。' : '請先儲存此章節，才可建立 Mux 上傳連結。'}</small></div>
+                <div className="form-row"><label htmlFor={`chapter-mux-upload-${chapter.key}`}>上傳影片到 Mux</label><input id={`chapter-mux-upload-${chapter.key}`} type="file" accept="video/mp4,video/webm,video/quicktime" disabled={!chapter.id || videoUploading} onChange={(event) => { const file = event.target.files?.[0]; if (file) uploadMuxVideo(chapterIndex, file); }} /><small className="admin-help-text">{chapter.id ? '需先在伺服器設定 Mux API Token；上傳完成後會自動回填 Playback ID。' : '請先儲存此章節，才可建立 Mux 上傳連結。'}</small></div>
                 <div className="form-row"><label htmlFor={`chapter-description-${chapter.key}`}>章節介紹</label><textarea id={`chapter-description-${chapter.key}`} value={chapter.description || ''} onChange={(event) => updateChapter(chapterIndex, 'description', event.target.value)} /></div>
                 <div className="admin-actions">
                   <button type="button" className="admin-btn admin-btn--secondary" onClick={() => updateChapter(chapterIndex, 'questions', [...(chapter.questions || []), emptyQuestion()])}>新增題目</button>
@@ -230,7 +246,7 @@ export default function AdminCourseEditor({ routeId }) {
         {error && <p className="admin-error" role="alert">{error}</p>}
         {notice && <p className="admin-notice" role="status">{notice}</p>}
         <div className="admin-actions admin-editor-save">
-          <button type="submit" className="admin-btn admin-btn--primary" disabled={saving}>{saving ? '儲存中…' : '儲存全部'}</button>
+          <button type="submit" className="admin-btn admin-btn--primary" disabled={saving || videoUploading}>{saving ? '儲存中…' : '儲存全部'}</button>
           <Link href="/admin/courses" className="admin-btn admin-btn--secondary">返回列表</Link>
         </div>
       </form>

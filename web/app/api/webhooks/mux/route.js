@@ -7,7 +7,7 @@ function verifySignature(rawBody, signature) {
   if (!secret || !signature) return false;
   const timestamp = signature.match(/t=(\d+)/)?.[1];
   const signed = signature.match(/v1=([a-f0-9]+)/i)?.[1];
-  if (!timestamp || !signed) return false;
+  if (!timestamp || !signed || Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
   const expected = createHmac('sha256', secret).update(`${timestamp}.${rawBody}`).digest('hex');
   const expectedBuffer = Buffer.from(expected, 'hex');
   const signedBuffer = Buffer.from(signed, 'hex');
@@ -23,10 +23,14 @@ export async function POST(request) {
     const asset = event.data;
     const chapterId = String(asset?.passthrough || '').match(/^chapter:(\d+)$/)?.[1];
     const playbackId = asset?.playback_ids?.[0]?.id;
-    if (!chapterId || !playbackId) return NextResponse.json({ ok: true });
-    await prisma.courseChapter.update({
-      where: { id: Number(chapterId) },
-      data: { muxAssetId: asset.id, muxPlaybackId: playbackId },
+    if (!chapterId || !playbackId || !asset.upload_id) return NextResponse.json({ ok: true });
+    await prisma.courseChapter.updateMany({
+      where: { id: Number(chapterId), muxUploadId: asset.upload_id },
+      data: {
+        muxAssetId: asset.id,
+        muxPlaybackId: playbackId,
+        ...(Number.isFinite(asset.duration) ? { durationMinutes: Math.ceil(asset.duration / 60) } : {}),
+      },
     });
     return NextResponse.json({ ok: true });
   } catch (error) {
