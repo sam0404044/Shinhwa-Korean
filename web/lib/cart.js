@@ -1,84 +1,121 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
-const CART_KEY = 'myth-korean-cart';
-const CART_EVENT = 'myth-korean-cart-updated';
+const empty = { items: [], purchasedIds: [], loading: true, error: '' };
+let snapshot = empty;
+let pending = null;
+let version = 0;
+let requestQueue = Promise.resolve();
+const subscribers = new Set();
 
-function readCart() {
-  if (typeof window === 'undefined') return [];
+function publish(value) {
+  snapshot = value;
+  subscribers.forEach((notify) => notify());
+}
 
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(CART_KEY) || '[]');
-    if (!Array.isArray(parsed)) return [];
-    const items = new Map();
-    for (const item of parsed) {
-      const id = Number(item?.id);
-      if (Number.isSafeInteger(id) && id > 0) items.set(String(id), { ...item, id: String(id), quantity: 1 });
+function subscribe(notify) {
+  subscribers.add(notify);
+  return () => subscribers.delete(notify);
+}
+
+export function resetCart() {
+  version += 1;
+  pending = null;
+  publish({ items: [], purchasedIds: [], loading: false, error: '' });
+}
+
+function cartRequest(body) {
+  const requestVersion = version;
+  const task = requestQueue.then(async () => {
+    if (requestVersion !== version) return { items: [], purchasedIds: [] };
+    const response = await fetch('/api/member/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      cache: 'no-store',
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const error = new Error(data.error || '無法讀取購物車。');
+      error.status = response.status;
+      throw error;
     }
-    return [...items.values()];
+    if (requestVersion === version) publish({ ...data, loading: false, error: '' });
+    return data;
+  });
+  requestQueue = task.catch(() => {});
+  return task;
+}
+
+// Move the previous browser cart into the authenticated member's database cart once.
+async function importLegacyCart(data, requestVersion) {
+  let ids;
+  try {
+    const legacy = JSON.parse(window.localStorage.getItem('myth-korean-cart') || '[]');
+    ids = Array.isArray(legacy) ? [...new Set(legacy.map((item) => Number(item?.id))
+      .filter((id) => Number.isSafeInteger(id) && id > 0))] : [];
   } catch {
-    return [];
+    return data;
   }
+  let current = data;
+  for (let offset = 0; offset < ids.length; offset += 100) {
+    if (requestVersion !== version) return current;
+    current = await cartRequest({ action: 'import', ids: ids.slice(offset, offset + 100) });
+  }
+  if (requestVersion === version) {
+    try {
+      window.localStorage.removeItem('myth-korean-cart');
+      window.localStorage.removeItem('myth-korean-purchases');
+    } catch {
+      // Storage may be disabled. Repeating the import is safe.
+    }
+  }
+  return current;
 }
 
-function writeCart(items) {
-  window.localStorage.setItem(CART_KEY, JSON.stringify(items));
-  window.dispatchEvent(new Event(CART_EVENT));
-}
-
-export function getCartItems() {
-  return readCart();
-}
-
-export function getCartCount() {
-  return readCart().length;
-}
-
-export function removeCartItems(ids) {
-  if (typeof window === 'undefined') return;
-  const removeIds = new Set(ids.map((id) => String(id)));
-  writeCart(readCart().filter((item) => !removeIds.has(String(item.id))));
+export function refreshCart() {
+  if (pending) return pending;
+  const requestVersion = version;
+  const task = cartRequest({ action: 'list' }).then((data) => importLegacyCart(data, requestVersion)).catch((error) => {
+    if (requestVersion !== version) return { items: [], purchasedIds: [] };
+    if (error.status === 401) {
+      resetCart();
+      return { items: [], purchasedIds: [] };
+    }
+    publish({ ...snapshot, loading: false, error: error.message });
+    throw error;
+  }).finally(() => {
+    if (pending === task) pending = null;
+  });
+  pending = task;
+  return task;
 }
 
 export function addCartItem(course) {
-  if (typeof window === 'undefined') return 0;
+  return cartRequest({ action: 'add', courseId: Number(course.id) });
+}
 
-  const items = readCart();
-  const id = String(course.id);
-  const existing = items.find((item) => String(item.id) === id);
+export function removeCartItems(ids) {
+  return cartRequest({ action: 'remove', ids: ids.map(Number) });
+}
 
-  if (existing) {
-    existing.quantity = 1;
-  } else {
-    items.push({
-      id,
-      title: course.title,
-      price: course.price,
-      image: course.image,
-      quantity: 1,
-    });
-  }
+export async function getCartItems() {
+  return (await refreshCart()).items;
+}
 
-  writeCart(items);
-  return getCartCount();
+export function useCart() {
+  const state = useSyncExternalStore(subscribe, () => snapshot, () => empty);
+  useEffect(() => {
+    const refresh = () => { refreshCart().catch(() => {}); };
+    refresh();
+    window.addEventListener('focus', refresh);
+    return () => window.removeEventListener('focus', refresh);
+  }, []);
+  return state;
 }
 
 export function useCartCount() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const updateCount = () => setCount(getCartCount());
-
-    updateCount();
-    window.addEventListener(CART_EVENT, updateCount);
-    window.addEventListener('storage', updateCount);
-
-    return () => {
-      window.removeEventListener(CART_EVENT, updateCount);
-      window.removeEventListener('storage', updateCount);
-    };
-  }, []);
-
-  return count;
+  return useCart().items.length;
 }

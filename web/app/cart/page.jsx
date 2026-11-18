@@ -11,7 +11,7 @@ export default async function CartPage() {
   if (!member) redirect('/login?next=%2Fcart');
   return (
     <main className="page-main">
-      <section className="section">
+      <section className="section cart-page">
         <div className="container">
           <h1 className="page-title">購物車</h1>
           <CartContents />

@@ -3162,12 +3162,27 @@ body:has(.member-quiz) .float-cta-stack { display: none; }
 }
 
 .member-sidebar {
-  background: var(--bubble-bg-gradient);
-  box-shadow: var(--bubble-shadow);
-  border: var(--bubble-border);
+  background: #302440;
+  box-shadow: 0 12px 30px rgb(35 24 52 / 14%);
+  border: 1px solid #463354;
   border-radius: var(--member-panel-radius);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+}
+.member-sidebar__title,
+.member-sidebar__link {
+  color: #fff;
+}
+.member-sidebar__link:hover {
+  background: #49375d;
+  color: #fff;
+}
+.member-sidebar__link.is-active {
+  background: #59436f;
+  color: #fff;
+  border-color: #d5baff;
+}
+.member-sidebar__link:focus-visible {
+  outline: 2px solid #e8d7ff;
+  outline-offset: -4px;
 }
 
 .member-content {
@@ -5037,3 +5052,71 @@ body {
   }
 }
 
+
+/* Cart empty state */
+.cart-page .page-title {
+  margin-bottom: 28px;
+}
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 880px;
+  margin: 0 auto 28px;
+  padding: clamp(44px, 7vw, 80px) 24px;
+  border: 1px solid #e8dff3;
+  border-radius: 24px;
+  background: radial-gradient(ellipse at 50% 0, #f3ebff, transparent 65%), #fff;
+  box-shadow: 0 12px 40px rgb(75 47 112 / 6%);
+  text-align: center;
+}
+.cart-empty__bag {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 12px 0 28px;
+  border: 2px solid #a58acb;
+  border-radius: 12px 12px 18px 18px;
+  background: linear-gradient(145deg, #faf6ff, #e9ddf8);
+  box-shadow: 0 8px 16px rgb(98 67 140 / 8%);
+}
+.cart-empty__bag::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 17px;
+  width: 26px;
+  height: 25px;
+  border: 2px solid #a58acb;
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+}
+.cart-empty h2 {
+  margin: 0 0 10px;
+  color: var(--color-text);
+  font-size: clamp(1.3rem, 3vw, 1.65rem);
+  line-height: 1.5;
+}
+.cart-empty p {
+  margin: 0 0 28px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+.cart-empty__browse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-width: 180px;
+  min-height: 48px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgb(124 104 182 / 18%);
+}
+.cart-empty__browse:focus-visible {
+  outline: 3px solid var(--color-primary-dark);
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  .cart-empty { border-radius: 18px; padding-inline: 20px; }
+  .cart-empty__browse { width: 100%; max-width: 280px; }
+}

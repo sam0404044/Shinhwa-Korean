@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getCartItems, removeCartItems } from '../lib/cart';
+import { getCartItems, refreshCart } from '../lib/cart';
 
 function toCheckoutItem(course) {
   return {
@@ -22,30 +22,29 @@ export default function CheckoutForm({ testMode = false }) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const ids = courseId ? [courseId] : getCartItems().map((item) => item.id);
-    const uniqueIds = Array.from(new Set(ids.map((id) => String(id))));
-    if (!uniqueIds.length) {
-      setItems([]);
-      return;
-    }
-    fetch('/api/public/courses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: uniqueIds }),
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || '無法讀取課程。');
-        const courses = data.courses || [];
-        const purchased = courses.filter((course) => course.purchased);
-        setPurchasedCourses(purchased);
-        if (purchased.length) removeCartItems(purchased.map((course) => course.id));
-        setItems(courses.filter((course) => !course.purchased).map(toCheckoutItem));
-      })
-      .catch((error) => {
+    let cancelled = false;
+    async function load() {
+      const ids = courseId ? [courseId] : (await getCartItems()).map((item) => item.id);
+      if (cancelled) return;
+      const uniqueIds = [...new Set(ids.map(String))];
+      if (!uniqueIds.length) {
         setItems([]);
-        setError(error.message);
+        return;
+      }
+      const response = await fetch('/api/public/courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: uniqueIds }),
       });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || '無法讀取課程。');
+      if (cancelled) return;
+      const courses = data.courses || [];
+      setPurchasedCourses(courses.filter((course) => course.purchased));
+      setItems(courses.filter((course) => !course.purchased).map(toCheckoutItem));
+    }
+    load().catch((requestError) => { if (!cancelled) setError(requestError.message); });
+    return () => { cancelled = true; };
   }, [courseId]);
 
   const total = items.reduce((sum, item) => sum + item.price, 0);
@@ -68,7 +67,7 @@ export default function CheckoutForm({ testMode = false }) {
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || '購買失敗。');
-      removeCartItems(courseIds);
+      await refreshCart().catch(() => {});
       router.push(`/payment-result?orders=${encodeURIComponent(result.orderIds.join(','))}`);
     } catch (err) {
       setError(err.message);

@@ -67,6 +67,23 @@ async function main() {
     await page('/courses', course.title);
     await page('/', course.title);
     await page('/course-play?courseId=' + ids.course, course.chapters[0].title, 200, memberCookie);
+    await post('/api/member/cart', { action: 'list' }, null, 401);
+    await Promise.all([
+      post('/api/member/cart', { action: 'add', courseId: ids.course }, memberCookie),
+      post('/api/member/cart', { action: 'add', courseId: ids.course }, memberCookie),
+    ]);
+    assert.equal(await prisma.cartItem.count({ where: { userId: ids.user, courseId: ids.course } }), 1);
+    const persistedCart = (await post('/api/member/cart', { action: 'list' }, memberCookie)).data;
+    assert.equal(persistedCart.items[0].id, ids.course);
+    ids.otherUser = (await prisma.user.create({ data: { email: marker + '-other@example.invalid', passwordHash } })).id;
+    const otherCookie = (await post('/api/auth/login', { email: marker + '-other@example.invalid', password }, null)).response.headers.get('set-cookie').split(';')[0];
+    assert.equal((await post('/api/member/cart', { action: 'list' }, otherCookie)).data.items.length, 0);
+    await post('/api/member/cart', { action: 'remove', ids: [ids.course] }, otherCookie);
+    assert.equal(await prisma.cartItem.count({ where: { userId: ids.user } }), 1);
+    await post('/api/member/cart', { action: 'remove', ids: [ids.course] }, memberCookie);
+    assert.equal((await post('/api/member/cart', { action: 'list' }, memberCookie)).data.items.length, 0);
+    await post('/api/member/cart', { action: 'import', ids: [ids.course, ids.course] }, memberCookie);
+    console.log('PASS persisted database cart, duplicate add, account isolation, removal and legacy import');
     const cartCourses = (await post('/api/public/courses', { ids: [ids.course] }, null)).data.courses;
     assert.equal(cartCourses[0].price, course.price);
     assert.equal(cartCourses[0].title, course.title);
@@ -74,6 +91,9 @@ async function main() {
     course.title += '-edited';
     await post('/api/admin/courses', { action: 'save', id: ids.course, course });
     await page('/course/' + ids.course, course.title);
+    const storedCart = (await post('/api/member/cart', { action: 'list' }, memberCookie)).data;
+    assert.equal(storedCart.items[0].price, 321);
+    assert.equal(storedCart.items[0].title, course.title);
     const updatedCart = (await post('/api/public/courses', { ids: [ids.course] }, null)).data.courses;
     assert.equal(updatedCart[0].price, 321);
     assert.equal(updatedCart[0].title, course.title);
@@ -161,6 +181,11 @@ async function main() {
       post('/api/member/checkout', { courseIds: [ids.course], amount: 1 }, memberCookie),
     ]);
     ids.order = results[0].data.orderIds[0];
+    assert.equal(await prisma.cartItem.count({ where: { userId: ids.user } }), 0);
+    const ownedCart = (await post('/api/member/cart', { action: 'add', courseId: ids.course }, memberCookie)).data;
+    assert.ok(ownedCart.purchasedIds.includes(ids.course));
+    assert.equal(ownedCart.items.length, 0);
+    assert.equal(await prisma.cartItem.count({ where: { userId: ids.user } }), 0);
     assert.equal(results[1].data.orderIds[0], ids.order);
     assert.equal(await prisma.order.count({ where: { userId: ids.user, courseId: ids.course } }), 1);
     assert.equal((await prisma.order.findUnique({ where: { id: ids.order } })).amount, 321);
@@ -223,6 +248,7 @@ async function main() {
     const mux = await post('/api/admin/mux', { action: 'create-upload', chapterId: 0 }, adminCookie, process.env.MUX_TOKEN_ID && process.env.MUX_TOKEN_SECRET ? 400 : 503);
     console.log('PASS supported deletion operations; Mux configuration response ' + mux.response.status);
   } finally {
+    if (ids.otherUser) await prisma.user.delete({ where: { id: ids.otherUser } });
     if (ids.user) await prisma.user.delete({ where: { id: ids.user } });
     if (ids.instructor) await prisma.instructor.deleteMany({ where: { id: ids.instructor } });
     if (ids.article) await prisma.article.deleteMany({ where: { id: ids.article } });

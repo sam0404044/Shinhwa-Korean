@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useCartCount, removeCartItems } from '../lib/cart';
+import { useCartCount, refreshCart, resetCart } from '../lib/cart';
 import { assetPath } from '../lib/paths';
 
 export default function Header() {
@@ -35,6 +35,7 @@ export default function Header() {
       credentials: 'same-origin',
       body: JSON.stringify({ action: 'logout' }),
     });
+    resetCart();
     setMember(null);
     closeMobilePanels();
     window.location.assign('/');
@@ -62,14 +63,8 @@ export default function Header() {
       const result = response.ok ? await response.json() : null;
       if (active) {
         setMember(result?.member || null);
-        if (result?.member) {
-          const purchasedResponse = await fetch('/api/member/orders', { method: 'POST', credentials: 'same-origin', cache: 'no-store' });
-          if (purchasedResponse.ok && active) {
-            const { orders } = await purchasedResponse.json();
-            const purchasedIds = orders.map((order) => order.courseId);
-            if (purchasedIds.length) removeCartItems(purchasedIds);
-          }
-        }
+        if (result?.member) refreshCart().catch(() => {});
+        else resetCart();
       }
     }).catch(() => { if (active) setMember(null); });
     return () => { active = false; };

@@ -62,6 +62,7 @@ export async function POST(request) {
           },
         }));
       }
+      await tx.cartItem.deleteMany({ where: { userId: member.id, courseId: { in: courseIds } } });
       return saved;
     });
     return json({ ok: true, testMode: true, orderIds: orders.map((order) => order.id) });

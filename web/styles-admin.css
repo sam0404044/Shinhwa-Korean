@@ -203,7 +203,10 @@ body:has(.admin-login-wrap) {
 .admin-badge--pending { background: #fff3cd; color: #856404; }
 
 .admin-table-wrap { overflow-x: auto; }
-.admin-row-actions { display: flex; gap: var(--button-gap, 12px); white-space: nowrap; }
+.admin-row-actions { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.admin-table td:not(.admin-row-actions) > .admin-btn + .admin-btn {
+  margin-inline-start: 8px;
+}
 .admin-delete-confirm {
   border: 1px solid #dc3545;
   background: #fff;
