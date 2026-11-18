@@ -95,10 +95,13 @@ async function saveCourse(id, input) {
       if (chapter.id && !existingChapters.has(chapter.id)) throw new Error('章節不屬於此課程。');
       const { id: chapterId, questions, ...chapterData } = chapter;
       const previousChapter = existingChapters.get(chapterId);
-      if (previousChapter?.muxUploadId) {
+      if (previousChapter?.muxUploadId &&
+          (chapterData.muxUploadId !== previousChapter.muxUploadId ||
+           chapterData.muxAssetId !== previousChapter.muxAssetId)) {
         chapterData.muxUploadId = previousChapter.muxUploadId;
         chapterData.muxAssetId = previousChapter.muxAssetId;
         chapterData.muxPlaybackId = previousChapter.muxPlaybackId;
+        chapterData.durationMinutes = previousChapter.durationMinutes;
       }
       const savedChapter = chapterId
         ? await tx.courseChapter.update({ where: { id: chapterId }, data: chapterData })
