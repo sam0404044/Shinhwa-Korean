@@ -9,13 +9,13 @@ export async function POST(request) {
   try {
     const courses = await prisma.course.findMany({
       where: {
-        published: true,
-        OR: [{ hasTrial: true }, { orders: { some: { userId: member.id, status: 'paid' } } }],
+        OR: [{ published: true, hasTrial: true }, { orders: { some: { userId: member.id, status: 'paid' } } }],
       },
       select: {
         id: true,
         title: true,
         hasTrial: true,
+        published: true,
         chapters: { select: { id: true } },
         orders: { where: { userId: member.id, status: 'paid' }, select: { amount: true }, take: 1 },
       },
@@ -27,6 +27,7 @@ export async function POST(request) {
         title: course.title,
         chapterCount: course.chapters.length,
         purchased: course.orders.length > 0,
+        published: course.published,
         amount: course.orders[0]?.amount || null,
         hasTrial: course.hasTrial,
       })),

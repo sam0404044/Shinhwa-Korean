@@ -13,6 +13,11 @@ export async function POST(request) {
     const body = await request.json();
     if (body.action === 'list') return json({ instructors: await prisma.instructor.findMany({ orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }] }) });
     const id = Number(body.id);
+    if (body.action === 'delete') {
+      if (!Number.isSafeInteger(id) || id < 1) return json({ error: '師資 ID 無效。' }, 400);
+      await prisma.instructor.delete({ where: { id } });
+      return json({ ok: true });
+    }
     if (body.action === 'get') {
       const instructor = await prisma.instructor.findUnique({ where: { id }, include: { courses: { select: { courseId: true } } } });
       return instructor ? json({ instructor: { ...instructor, courseIds: instructor.courses.map((item) => item.courseId) } }) : json({ error: '找不到師資。' }, 404);
@@ -38,6 +43,7 @@ export async function POST(request) {
     }
     return json({ error: '未知操作。' }, 400);
   } catch (error) {
+    if (error.code === 'P2025') return json({ error: '找不到師資。' }, 404);
     console.error(error);
     return json({ error: '師資資料儲存失敗。' }, 500);
   }

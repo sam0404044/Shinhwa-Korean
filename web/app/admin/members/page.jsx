@@ -20,6 +20,7 @@ export default function AdminMembersPage() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [busyId, setBusyId] = useState(null);
 
   const loadMembers = useCallback(async (search = '') => {
     setLoading(true);
@@ -38,19 +39,39 @@ export default function AdminMembersPage() {
 
   async function toggleStatus(member) {
     const status = member.status === 'active' ? 'suspended' : 'active';
+    if (busyId !== null) return;
+    if (status === 'suspended' && !window.confirm(`確定停權會員「${member.name || member.email}」？停權後將無法登入或觀看課程。`)) return;
+    setBusyId(member.id);
     setError('');
     try {
       const data = await membersRequest({ action: 'set-status', id: member.id, status });
       setMembers((items) => items.map((item) => item.id === member.id ? data.member : item));
     } catch (requestError) {
       setError(requestError.message);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function deleteMember(member) {
+    if (busyId !== null) return;
+    if (!window.confirm(`確定永久刪除會員「${member.name || member.email}」？此操作會一併刪除該會員的訂單、測驗成績與觀看紀錄，且無法復原。`)) return;
+    setBusyId(member.id);
+    setError('');
+    try {
+      await membersRequest({ action: 'delete', id: member.id });
+      setMembers((items) => items.filter((item) => item.id !== member.id));
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setBusyId(null);
     }
   }
 
   return (
     <>
       <h1 className="admin-page-title">會員管理</h1>
-      <p style={{ marginBottom: '20px', color: '#666' }}>註冊會員、搜尋、基本資料檢視、停權／啟用。</p>
+      <p style={{ marginBottom: '20px', color: '#666' }}>註冊會員、搜尋、基本資料檢視、停權／啟用與刪除。</p>
       <div className="admin-card">
         <form className="admin-form" onSubmit={(event) => { event.preventDefault(); loadMembers(query); }}>
           <div className="form-row" style={{ marginBottom: '16px' }}>
@@ -72,7 +93,8 @@ export default function AdminMembersPage() {
                 <td><span className={`admin-badge admin-badge--${member.status === 'active' ? 'on' : 'off'}`}>{member.status === 'active' ? '啟用' : '停權'}</span></td>
                 <td className="admin-row-actions">
                   <Link href={`/admin/members/${member.id}`} className="admin-btn admin-btn--small admin-btn--secondary">檢視</Link>
-                  <button type="button" className="admin-btn admin-btn--small admin-btn--secondary" onClick={() => toggleStatus(member)}>{member.status === 'active' ? '停權' : '啟用'}</button>
+                  <button type="button" className="admin-btn admin-btn--small admin-btn--secondary" disabled={busyId !== null} onClick={() => toggleStatus(member)}>{member.status === 'active' ? '停權' : '啟用'}</button>
+                  <button type="button" className="admin-btn admin-btn--small admin-btn--danger" disabled={busyId !== null} onClick={() => deleteMember(member)}>{busyId === member.id ? '處理中…' : '刪除'}</button>
                 </td>
               </tr>
             ))}

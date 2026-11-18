@@ -56,6 +56,15 @@ export async function POST(request) {
       return member ? json({ member: memberData(member) }) : json({ error: '找不到會員。' }, 404);
     }
 
+    if (body.action === 'delete') {
+      await prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM User WHERE id = ${id} FOR UPDATE`;
+        await tx.order.deleteMany({ where: { userId: id } });
+        await tx.user.delete({ where: { id } });
+      });
+      return json({ ok: true });
+    }
+
     if (body.action === 'set-status') {
       if (!['active', 'suspended'].includes(body.status)) return json({ error: '會員狀態無效。' }, 400);
       const member = await prisma.user.update({ where: { id }, data: { status: body.status } });

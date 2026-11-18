@@ -42,6 +42,14 @@ export async function POST(request) {
     }
     if (body.action === 'save') {
       const data = testimonialInput(body.testimonial);
+      if (body.testimonial?.courseId != null) {
+        const courseId = body.testimonial.courseId === '' ? null : validId(body.testimonial.courseId);
+        if (body.testimonial.courseId !== '' && !courseId) return json({ error: '推薦課程無效。' }, 400);
+        const course = courseId ? await prisma.course.findUnique({ where: { id: courseId }, select: { title: true } }) : null;
+        if (courseId && !course) return json({ error: '推薦課程已刪除，請重新選擇。' }, 400);
+        data.courseId = courseId;
+        data.courseRecommend = course?.title || null;
+      }
       const testimonial = id ? await prisma.testimonial.update({ where: { id }, data }) : await prisma.testimonial.create({ data });
       return json({ ok: true, id: testimonial.id });
     }

@@ -100,6 +100,23 @@ async function main() {
     await page('/instructor/' + ids.instructor, null, 404);
     console.log('PASS instructor upload/linking and course/instructor unpublishing');
 
+    await prisma.article.createMany({
+      data: Array.from({ length: 11 }, (_, index) => ({
+        title: marker + '-pagination-' + index, content: marker + '-searchable-body',
+        date: new Date('2026-11-18'), published: false,
+      })),
+    });
+    const firstPage = (await post('/api/admin/articles', { action: 'list', query: marker + '-searchable-body', page: 1 })).data;
+    const secondPage = (await post('/api/admin/articles', { action: 'list', query: marker + '-searchable-body', page: 2 })).data;
+    assert.equal(firstPage.total, 11);
+    assert.equal(firstPage.articles.length, 10);
+    assert.equal(secondPage.articles.length, 1);
+    assert.equal(new Set([...firstPage.articles, ...secondPage.articles].map((item) => item.id)).size, 11);
+    await post('/api/admin/articles', { action: 'delete', id: secondPage.articles[0].id });
+    const clamped = (await post('/api/admin/articles', { action: 'list', query: marker + '-searchable-body', page: 2 })).data;
+    assert.equal(clamped.page, 1);
+    assert.equal(clamped.pageCount, 1);
+    console.log('PASS article content search, ten-per-page pagination and last-page deletion');
     let article = { title: marker + '-article', date: '2026-11-18', category: 'Test', excerpt: marker + '-excerpt', content: '<p>' + marker + '-body</p><img src="' + uploadUrl + '"><script>alert(1)</script>', imageUrl: '', published: true };
     ids.article = (await post('/api/admin/articles', { action: 'save', article })).data.id;
     const savedArticle = (await post('/api/admin/articles', { action: 'get', id: ids.article })).data.article;
@@ -118,10 +135,13 @@ async function main() {
     assert.ok(!(await page('/news')).includes(article.title));
     console.log('PASS article save, HTML sanitization, first-image/custom thumbnail, Open Graph, unpublishing');
 
-    let testimonial = { name: marker + '-testimonial', role: marker + '-role', quote: marker + '-quote', quoteShort: marker + '-short', avatarUrl: uploadUrl, sortOrder: 0, showOnHome: true };
+    let testimonial = { name: marker + '-testimonial', role: marker + '-role', quote: marker + '-quote', quoteShort: marker + '-short', avatarUrl: uploadUrl, sortOrder: 0, showOnHome: true, courseId: ids.course };
     ids.testimonial = (await post('/api/admin/testimonials', { action: 'save', testimonial })).data.id;
     await page('/testimonials', testimonial.name);
-    await page('/testimonial/' + ids.testimonial, testimonial.quote);
+    const recommendationPage = await page('/testimonial/' + ids.testimonial, testimonial.quote);
+    assert.ok(recommendationPage.includes('href="/course/' + ids.course + '"'));
+    assert.equal((await post('/api/admin/testimonials', { action: 'get', id: ids.testimonial })).data.testimonial.courseId, ids.course);
+    await post('/api/admin/testimonials', { action: 'save', id: ids.testimonial, testimonial: { ...testimonial, courseId: 2147483647 } }, adminCookie, 400);
     await page('/', testimonial.quoteShort);
     testimonial.showOnHome = false;
     await post('/api/admin/testimonials', { action: 'save', id: ids.testimonial, testimonial });
@@ -146,6 +166,14 @@ async function main() {
     assert.equal((await prisma.order.findUnique({ where: { id: ids.order } })).amount, 321);
     await page('/course-play?courseId=' + ids.course, course.title, 200, memberCookie);
     await page('/course/' + ids.course, '此課程已購買', 200, memberCookie);
+    const memberCatalog = (await post('/api/member/courses', {}, memberCookie)).data.courses;
+    assert.ok(memberCatalog.some((item) => item.id === ids.course && item.purchased));
+    course.published = false;
+    await post('/api/admin/courses', { action: 'save', id: ids.course, course });
+    const hiddenCatalog = (await post('/api/member/courses', {}, memberCookie)).data.courses;
+    assert.ok(hiddenCatalog.some((item) => item.id === ids.course && item.purchased && !item.published));
+    course.published = true;
+    await post('/api/admin/courses', { action: 'save', id: ids.course, course });
     const owned = (await post('/api/public/courses', { ids: [ids.course] }, memberCookie)).data.courses;
     assert.equal(owned[0].purchased, true);
     const anonymous = (await post('/api/public/courses', { ids: [ids.course] }, null)).data.courses;
@@ -176,7 +204,20 @@ async function main() {
       await post('/api/admin/' + resource, { action: 'delete', id });
       await post('/api/admin/' + resource, { action: 'get', id }, adminCookie, 404);
     }
-    await prisma.order.delete({ where: { id: ids.order } }); delete ids.order;
+    await post('/api/admin/members', { action: 'delete', id: ids.user }, null, 401);
+    await post('/api/admin/members', { action: 'delete', id: ids.user });
+    await post('/api/admin/members', { action: 'get', id: ids.user }, adminCookie, 404);
+    assert.equal(await prisma.order.count({ where: { userId: ids.user } }), 0);
+    assert.equal(await prisma.videoWatchSession.count({ where: { userId: ids.user } }), 0);
+    await post('/api/auth/login', { email: marker + '@example.invalid', password }, null, 401);
+    delete ids.user;
+    delete ids.order;
+    console.log('PASS purchased course catalog including unpublished purchases, member deletion and dependent records cleanup');
+    await post('/api/admin/instructors', { action: 'delete', id: ids.instructor }, null, 401);
+    await post('/api/admin/instructors', { action: 'delete', id: ids.instructor });
+    assert.equal(await prisma.instructorCourse.count({ where: { instructorId: ids.instructor } }), 0);
+    assert.ok(await prisma.course.findUnique({ where: { id: ids.course } }));
+    await page('/instructor/' + ids.instructor, null, 404);
     await post('/api/admin/courses', { action: 'delete', id: ids.course });
     await page('/course/' + ids.course, null, 404);
     const mux = await post('/api/admin/mux', { action: 'create-upload', chapterId: 0 }, adminCookie, process.env.MUX_TOKEN_ID && process.env.MUX_TOKEN_SECRET ? 400 : 503);
@@ -189,6 +230,7 @@ async function main() {
     if (ids.course) await prisma.course.deleteMany({ where: { id: ids.course } });
     if (ids.admin) await prisma.admin.delete({ where: { id: ids.admin } });
     if (uploadUrl && process.env.UPLOAD_DIR) await unlink(path.join(process.env.UPLOAD_DIR, path.basename(uploadUrl)));
+    await prisma.article.deleteMany({ where: { title: { startsWith: marker } } });
     await prisma.$disconnect();
     console.log('Temporary verification records cleaned up');
   }

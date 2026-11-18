@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const PANELS = [
@@ -12,6 +13,10 @@ const PANELS = [
   { id: 'scores', label: '測驗成績' },
 ];
 export default function MemberPage() {
+  const router = useRouter();
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState('');
+  const [reload, setReload] = useState(0);
   const [panel, setPanel] = useState('my-courses');
   const [orders, setOrders] = useState([]);
   const [memberCourses, setMemberCourses] = useState([]);
@@ -28,36 +33,45 @@ export default function MemberPage() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    setDataLoading(true);
+    setDataError('');
 
-    async function loadMemberData() {
-      const [ordersResponse, coursesResponse, profileResponse] = await Promise.all([
-        fetch('/api/member/orders', { method: 'POST' }),
-        fetch('/api/member/courses', { method: 'POST' }),
-        fetch('/api/member/profile', { cache: 'no-store' }),
-      ]);
-      if (cancelled) return;
-      const ordersData = ordersResponse.ok ? await ordersResponse.json() : { orders: [] };
-      const coursesData = coursesResponse.ok ? await coursesResponse.json() : { courses: [] };
-      const profileData = profileResponse.ok ? await profileResponse.json() : { profile: { name: '', email: '' } };
+    async function readMemberData(url, options) {
+      const response = await fetch(url, { ...options, cache: 'no-store', signal: controller.signal });
+      if (response.status === 401) {
+        router.replace('/login?next=%2Fmember');
+        throw new Error('登入已失效，請重新登入。');
+      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || '無法讀取會員資料，請稍後再試。');
+      return data;
+    }
+
+    Promise.all([
+      readMemberData('/api/member/orders', { method: 'POST' }),
+      readMemberData('/api/member/courses', { method: 'POST' }),
+      readMemberData('/api/member/profile'),
+    ]).then(([ordersData, coursesData, profileData]) => {
+      if (controller.signal.aborted) return;
       setOrders(ordersData.orders || []);
       setMemberCourses(coursesData.courses || []);
       setProfile(profileData.profile || { name: '', email: '' });
-    }
+    }).catch((requestError) => {
+      if (!controller.signal.aborted) setDataError(requestError.message);
+    }).finally(() => {
+      if (!controller.signal.aborted) setDataLoading(false);
+    });
 
-    loadMemberData().catch(() => { if (!cancelled) { setOrders([]); setMemberCourses([]); } });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    return () => controller.abort();
+  }, [router, reload]);
 
   const courseRows = memberCourses.map((course) => ({
     key: `course-${course.id}`,
     label: course.purchased ? '已購買' : '試聽課程',
     title: course.title,
-    meta: course.purchased ? `NT$ ${Number(course.amount || 0).toLocaleString()}` : `${course.chapterCount} 堂課 · 可試作單元小考`,
-    href: `/course-play?courseId=${course.id}`,
+    meta: course.published === false ? '課程暫停開放，購買紀錄仍保留' : course.purchased ? `NT$ ${Number(course.amount || 0).toLocaleString()}` : `${course.chapterCount} 堂課 · 可試作單元小考`,
+    href: course.published === false ? null : `/course-play?courseId=${course.id}`,
   }));
 
   const show = (id) => {
@@ -102,13 +116,15 @@ export default function MemberPage() {
             </ul>
           </nav>
           <div className="member-content">
+            {dataLoading ? <p role="status">正在讀取會員課程與購買紀錄…</p> : null}
+            {dataError ? <div role="alert"><p>{dataError}</p><button type="button" className="btn btn-outline btn--small" onClick={() => setReload((current) => current + 1)}>重新讀取</button></div> : null}
             <div id="my-courses" className={`member-block ${panel === 'my-courses' ? 'is-visible' : ''}`}>
               <header className="member-page-heading">
                 <p className="member-page-heading__eyebrow">學習空間</p>
                 <h2>我的課程</h2>
                 <p>從這裡繼續課程、查看章節與進入單元小考。</p>
               </header>
-              {courseRows.length ? (
+              {!dataLoading && !dataError ? (courseRows.length ? (
                 <ul className="member-course-list">
                   {courseRows.map((course, index) => (
                     <li key={course.key} className={`member-course-row ${index % 2 === 0 ? 'is-even' : 'is-odd'}`}>
@@ -130,7 +146,7 @@ export default function MemberPage() {
                   <p>完成購買後，課程會顯示在這裡。</p>
                   <Link href="/courses/" className="btn btn-outline btn--small">瀏覽課程</Link>
                 </div>
-              )}
+              )) : null}
             </div>
             <div id="watch-history" className={`member-block ${panel === 'watch-history' ? 'is-visible' : ''}`}>
               <header className="member-page-heading">
@@ -174,7 +190,7 @@ export default function MemberPage() {
                 <h2>購買紀錄</h2>
                 <p>查看已完成付款的課程與訂單狀態。</p>
               </header>
-              {orders.length ? (
+              {!dataLoading && !dataError ? (orders.length ? (
                 <ul className="member-order-list">
                   {orders.map((order) => (
                     <li key={order.id}>
@@ -188,7 +204,7 @@ export default function MemberPage() {
                   <strong>尚無購買紀錄</strong>
                   <p>完成課程購買後，訂單資訊會顯示在這裡。</p>
                 </div>
-              )}
+              )) : null}
             </div>
             <div id="coins" className={`member-block ${panel === 'coins' ? 'is-visible' : ''}`}>
               <header className="member-page-heading">

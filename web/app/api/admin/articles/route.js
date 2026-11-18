@@ -41,7 +41,27 @@ export async function POST(request) {
   if (!await getAdmin(request)) return json({ error: '請先登入後台。' }, 401);
   try {
     const body = await request.json();
-    if (body.action === 'list') return json({ articles: await prisma.article.findMany({ orderBy: [{ date: 'desc' }, { id: 'desc' }] }) });
+    if (body.action === 'list') {
+      const query = String(body.query || '').trim();
+      const where = query ? {
+        OR: ['title', 'excerpt', 'category', 'content'].map((field) => ({ [field]: { contains: query } })),
+      } : {};
+      const requestedPage = validId(body.page) || 1;
+      const pageSize = 10;
+      const result = await prisma.$transaction(async (tx) => {
+        const total = await tx.article.count({ where });
+        const pageCount = Math.max(1, Math.ceil(total / pageSize));
+        const page = Math.min(requestedPage, pageCount);
+        const articles = await tx.article.findMany({
+          where,
+          orderBy: [{ date: 'desc' }, { id: 'desc' }],
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        });
+        return { articles, total, page, pageCount, pageSize };
+      });
+      return json(result);
+    }
     const id = validId(body.id);
     if (body.action === 'get') {
       const article = id ? await prisma.article.findUnique({ where: { id } }) : null;
