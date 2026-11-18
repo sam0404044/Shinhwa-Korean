@@ -8,7 +8,7 @@ function RequiredStar() {
   return <span className="required-star" aria-label="必填">*</span>;
 }
 
-export default function LoginForm() {
+export default function LoginForm({ next }) {
   const router = useRouter();
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -28,7 +28,9 @@ export default function LoginForm() {
       const result = await response.json();
       if (response.status === 401) throw new Error('帳號或密碼錯誤');
       if (!response.ok) throw new Error(result.error || '登入失敗。');
-      router.replace('/member');
+      const destination = typeof next === 'string' && next.startsWith('/') &&
+        !next.startsWith('//') && !next.includes('\\') ? next : '/member';
+      router.replace(destination);
       router.refresh();
     } catch (err) {
       setError(err.message);

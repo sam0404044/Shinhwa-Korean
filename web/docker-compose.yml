@@ -20,6 +20,8 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
+      ALLOW_MOCK_PAYMENTS: ${ALLOW_MOCK_PAYMENTS:-true}
       COOKIE_SECURE: "false"
       DATABASE_URL: mysql://shenhua:${MYSQL_PASSWORD}@db:3306/shenhua_korean
       ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}

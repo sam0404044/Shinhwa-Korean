@@ -10,7 +10,13 @@ function readCart() {
 
   try {
     const parsed = JSON.parse(window.localStorage.getItem(CART_KEY) || '[]');
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    const items = new Map();
+    for (const item of parsed) {
+      const id = Number(item?.id);
+      if (Number.isSafeInteger(id) && id > 0) items.set(String(id), { ...item, id: String(id), quantity: 1 });
+    }
+    return [...items.values()];
   } catch {
     return [];
   }
@@ -26,7 +32,7 @@ export function getCartItems() {
 }
 
 export function getCartCount() {
-  return readCart().reduce((total, item) => total + (Number(item.quantity) || 0), 0);
+  return readCart().length;
 }
 
 export function removeCartItems(ids) {
@@ -43,7 +49,7 @@ export function addCartItem(course) {
   const existing = items.find((item) => String(item.id) === id);
 
   if (existing) {
-    existing.quantity = (Number(existing.quantity) || 0) + 1;
+    existing.quantity = 1;
   } else {
     items.push({
       id,

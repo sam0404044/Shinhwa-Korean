@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useCartCount } from '../lib/cart';
+import { useCartCount, removeCartItems } from '../lib/cart';
 import { assetPath } from '../lib/paths';
 
 export default function Header() {
@@ -60,7 +60,17 @@ export default function Header() {
       cache: 'no-store',
     }).then(async (response) => {
       const result = response.ok ? await response.json() : null;
-      if (active) setMember(result?.member || null);
+      if (active) {
+        setMember(result?.member || null);
+        if (result?.member) {
+          const purchasedResponse = await fetch('/api/member/orders', { method: 'POST', credentials: 'same-origin', cache: 'no-store' });
+          if (purchasedResponse.ok && active) {
+            const { orders } = await purchasedResponse.json();
+            const purchasedIds = orders.map((order) => order.courseId);
+            if (purchasedIds.length) removeCartItems(purchasedIds);
+          }
+        }
+      }
     }).catch(() => { if (active) setMember(null); });
     return () => { active = false; };
   }, [pathname]);
@@ -95,7 +105,7 @@ export default function Header() {
           )}
         </button>
 
-        <Link href="/cart" className="mobile-header-cart" aria-label="購物車">
+        <Link href={member ? '/cart' : '/login?next=%2Fcart'} className="mobile-header-cart" aria-label="購物車">
           <svg
             className="cart-link__icon"
             viewBox="0 0 24 24"
@@ -107,7 +117,7 @@ export default function Header() {
             <circle cx="10.7" cy="20" r="1.35" />
             <circle cx="18" cy="20" r="1.35" />
           </svg>
-          <span className="cart-link__badge">{cartCount}</span>
+          {member && cartCount > 0 ? <span className="cart-link__badge">{cartCount}</span> : null}
         </Link>
 
         <nav className={`nav-menu ${mobileOpen ? 'is-open-mobile' : ''}`} onClick={handleNavClick}>
@@ -138,7 +148,7 @@ export default function Header() {
                 搜尋
               </button>
             </div>
-            <Link href="/cart" className="cart-link" aria-label="購物車">
+            <Link href={member ? '/cart' : '/login?next=%2Fcart'} className="cart-link" aria-label="購物車">
               <svg
                 className="cart-link__icon"
                 viewBox="0 0 24 24"
@@ -150,7 +160,7 @@ export default function Header() {
                 <circle cx="10.7" cy="20" r="1.35" />
                 <circle cx="18" cy="20" r="1.35" />
               </svg>
-              <span className="cart-link__badge">{cartCount}</span>
+              {member && cartCount > 0 ? <span className="cart-link__badge">{cartCount}</span> : null}
             </Link>
             {member ? (
               <div className="nav-member nav-member--header">

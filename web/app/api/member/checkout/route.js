@@ -1,3 +1,4 @@
+import { isTestCheckout } from '../../../../lib/payment-mode';
 import { randomBytes } from 'node:crypto';
 import { NextResponse } from 'next/server';
 import { getMember } from '../../../../lib/member-session';
@@ -30,36 +31,41 @@ export async function POST(request) {
     if (courses.length !== courseIds.length) return json({ error: '選擇的課程已下架或不存在。' }, 400);
 
     // Actual providers require a merchant account and verified callback before payment can be marked paid.
-    if (process.env.PAYMENT_PROVIDER !== 'mock' || process.env.ALLOW_MOCK_PAYMENTS !== 'true') {
+    if (!isTestCheckout()) {
       return json({
         error: '線上付款尚未啟用。請等待金流商店帳號與 HTTPS 網域設定完成。',
         code: 'PAYMENT_NOT_CONFIGURED',
       }, 503);
     }
 
-    const orders = [];
-    for (const course of courses) {
-      const existingOrder = await prisma.order.findFirst({
-        where: { userId: member.id, courseId: course.id, status: 'paid' },
+    const orders = await prisma.$transaction(async (tx) => {
+      // Serialize checkout attempts for this member so retries cannot duplicate purchases.
+      await tx.$queryRaw`SELECT id FROM User WHERE id = ${member.id} FOR UPDATE`;
+      const currentCourses = await tx.course.findMany({
+        where: { id: { in: courseIds }, published: true },
+        select: { id: true, price: true },
       });
-      if (existingOrder) {
-        orders.push(existingOrder);
-        continue;
+      if (currentCourses.length !== courseIds.length) throw new Error('選擇的課程已下架或不存在。');
+      const saved = [];
+      for (const course of currentCourses) {
+        const existing = await tx.order.findFirst({
+          where: { userId: member.id, courseId: course.id, status: 'paid' },
+        });
+        saved.push(existing || await tx.order.create({
+          data: {
+            orderNo: `TEST${Date.now()}${randomBytes(3).toString('hex')}`,
+            userId: member.id,
+            courseId: course.id,
+            amount: course.price,
+            status: 'paid',
+            paidAt: new Date(),
+          },
+        }));
       }
+      return saved;
+    });
+    return json({ ok: true, testMode: true, orderIds: orders.map((order) => order.id) });
 
-      orders.push(await prisma.order.create({
-        data: {
-          orderNo: `ORD${Date.now()}${randomBytes(3).toString('hex')}`,
-          userId: member.id,
-          courseId: course.id,
-          amount: course.price,
-          status: 'paid',
-          paidAt: new Date(),
-        },
-      }));
-    }
-
-    return json({ ok: true, orderCount: orders.length });
   } catch (error) {
     console.error(error);
     return json({ error: '購買失敗。' }, 500);

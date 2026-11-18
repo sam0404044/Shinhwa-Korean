@@ -5,13 +5,13 @@ export const metadata = {
   title: '會員登入 - 神話韓語',
 };
 
-export default function LoginPage() {
+export default function LoginPage({ searchParams }) {
   return (
     <main className="page-main">
       <section className="section auth-section">
         <div className="container container--narrow">
           <h1 className="page-title">會員登入</h1>
-          <LoginForm />
+          <LoginForm next={searchParams?.next} />
         </div>
       </section>
     </main>

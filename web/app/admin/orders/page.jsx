@@ -1,8 +1,21 @@
-import { orders } from '../../../data/orders';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { prisma } from '../../../lib/prisma';
+import { getAdmin } from '../../../lib/admin-session';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = { title: '訂單／交易 - 神話韓語後台' };
 
-export default function AdminOrdersPage() {
+export default async function AdminOrdersPage() {
+  if (!await getAdmin({ cookies: cookies() })) redirect('/admin/login');
+  const orders = await prisma.order.findMany({
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    include: {
+      user: { select: { name: true, email: true } },
+      course: { select: { title: true } },
+    },
+  });
   const statusLabel = { paid: '已付款', pending: '待付款', failed: '失敗', refunded: '已退款' };
 
   return (
@@ -15,8 +28,8 @@ export default function AdminOrdersPage() {
           <thead>
             <tr>
               <th>訂單編號</th>
-              <th>會員 ID</th>
-              <th>課程 ID</th>
+              <th>會員</th>
+              <th>課程</th>
               <th>金額</th>
               <th>狀態</th>
               <th>下單時間</th>
@@ -27,8 +40,8 @@ export default function AdminOrdersPage() {
             {orders.map((o) => (
               <tr key={o.id}>
                 <td>{o.id}</td>
-                <td>{o.userId}</td>
-                <td>{o.courseId}</td>
+                <td>{o.user.name || o.user.email}</td>
+                <td>{o.course.title}</td>
                 <td>NT$ {o.amount}</td>
                 <td><span className={`admin-badge admin-badge--${o.status === 'paid' ? 'on' : o.status === 'pending' ? 'pending' : 'off'}`}>{statusLabel[o.status] || o.status}</span></td>
                 <td>{o.createdAt ? new Date(o.createdAt).toLocaleString('zh-TW') : '-'}</td>

@@ -12,11 +12,12 @@ function toCheckoutItem(course) {
   };
 }
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ testMode = false }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const courseId = searchParams.get('course');
   const [items, setItems] = useState([]);
+  const [purchasedCourses, setPurchasedCourses] = useState([]);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,7 +36,11 @@ export default function CheckoutForm() {
       .then(async (response) => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || '無法讀取課程。');
-        setItems((data.courses || []).map(toCheckoutItem));
+        const courses = data.courses || [];
+        const purchased = courses.filter((course) => course.purchased);
+        setPurchasedCourses(purchased);
+        if (purchased.length) removeCartItems(purchased.map((course) => course.id));
+        setItems(courses.filter((course) => !course.purchased).map(toCheckoutItem));
       })
       .catch((error) => {
         setItems([]);
@@ -64,7 +69,7 @@ export default function CheckoutForm() {
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error || '購買失敗。');
       removeCartItems(courseIds);
-      router.push('/payment-result');
+      router.push(`/payment-result?orders=${encodeURIComponent(result.orderIds.join(','))}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,6 +79,7 @@ export default function CheckoutForm() {
 
   return (
     <form className="checkout-form" onSubmit={handleSubmit}>
+      {purchasedCourses.map((course) => <p key={course.id} role="status">{course.title}：此課程已購買。<a href={`/course-play?courseId=${course.id}`}>開始上課</a></p>)}
       {items.length ? (
         <ul className="checkout-items">
           {items.map((item) => (
@@ -86,17 +92,17 @@ export default function CheckoutForm() {
       ) : (
         <p className="checkout-hint">請先選擇課程。</p>
       )}
-      <div className="form-group">
+      {!testMode && <div className="form-group">
         <label htmlFor="payment">付款方式</label>
         <select id="payment" name="payment" defaultValue="credit">
           <option value="credit">信用卡</option>
           <option value="atm">ATM 轉帳</option>
         </select>
-      </div>
+      </div>}
       <p className="checkout-total">應付金額：NT$ {total.toLocaleString()}</p>
       {error ? <p className="auth-form__status auth-form__status--error" role="alert">{error}</p> : null}
       <button type="submit" className="btn btn-primary btn--block" disabled={submitting || !items.length}>
-        {submitting ? '處理中…' : '前往付款'}
+        {submitting ? '處理中…' : (testMode ? '確認測試結帳' : '前往付款')}
       </button>
     </form>
   );
